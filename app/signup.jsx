@@ -32,12 +32,15 @@ const signup = () => {
       {/* Signup Card with orange shadow */}
       <ScrollView
         className="w-full bg-white rounded-2xl p-6 max-w-xl mt-2 mb-5"
+        contentContainerStyle={{ paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
         style={{
           shadowColor: "#FFA500",
           shadowOffset: { width: 0, height: 10 },
           shadowOpacity: 0.3,
           shadowRadius: 20,
           elevation: 10,
+          
         }}
       >
         <Text className="text-2xl font-bold text-center text-orange-600 mb-6">
