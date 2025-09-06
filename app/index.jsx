@@ -7,8 +7,17 @@ const Home = () => {
   return (
     <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
       <Text>Home</Text>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/citizenLogin')}>
+        <Text style={{color:'#fff'}}>Login as citizen</Text>
+      </Pressable>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/deptLogin')}>
+        <Text style={{color:'#fff'}}>Login as department</Text>
+      </Pressable>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/AutorityLogin')}>
+        <Text style={{color:'#fff'}}>Login as Autority</Text>
+      </Pressable>
       <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/signup')}>
-        <Text style={{color:'#fff'}}>Go to Sign Up</Text>
+        <Text style={{color:'#fff'}}>Sign Up</Text>
       </Pressable>
     </View>
   )
