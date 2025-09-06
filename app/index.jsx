@@ -19,6 +19,9 @@ const Home = () => {
       <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/signup')}>
         <Text style={{color:'#fff'}}>Sign Up</Text>
       </Pressable>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/(DashBoard)/Home')}>
+        <Text style={{color:'#fff'}}>Go to Dashboard</Text>
+      </Pressable>
     </View>
   )
 }

@@ -21,6 +21,7 @@ export default function RootLayout() {
       <Stack.Screen name="citizenLogin" options={{title: "Login"}}/>
       <Stack.Screen name="deptLogin" options={{title: "Login"}}/>
       <Stack.Screen name="AutorityLogin" options={{title: "Login"}}/>
+      <Stack.Screen name="(DashBoard)" options={{headerShown:false}}/>
     </Stack>
   );
 }
