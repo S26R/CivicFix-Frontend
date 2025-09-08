@@ -3,7 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
+import { Pressable } from "react-native";
 
 const Allissues_dash = () => {
   const [QueryData, setQueryData] = useState({
@@ -137,12 +137,12 @@ const Allissues_dash = () => {
     ],
   });
 
-    const handleUpvote = (id) => {
-      const updated = QueryData.issues.map((issue) =>
-        issue._id === id ? { ...issue, upvotes: issue.upvotes + 1 } : issue
-      );
-      setQueryData({ issues: updated });
-    };
+  const handleUpvote = (id) => {
+    const updated = QueryData.issues.map((issue) =>
+      issue._id === id ? { ...issue, upvotes: issue.upvotes + 1 } : issue
+    );
+    setQueryData({ issues: updated });
+  };
   return (
     <View className="flex-1 bg-white ">
       <View
@@ -156,7 +156,7 @@ const Allissues_dash = () => {
         {QueryData.issues.map((issue) => (
           <View
             key={issue._id}
-            className="mb-5 rounded-2xl bg-orange-50 shadow-lg p-4 border border-orange-200"
+            className="mb-5 rounded-2xl bg-orange-50 p-4 border border-orange-200"
             style={{
               shadowColor: "#f97316",
               shadowOffset: { width: 0, height: 4 },
@@ -192,13 +192,32 @@ const Allissues_dash = () => {
                   {issue.upvotes} Upvotes
                 </Text>
               </View>
-
               <TouchableOpacity
+                onPress={() => handleUpvote(issue._id)}
+                activeOpacity={0.7}
+                style={{
+                  backgroundColor: "#f97316",
+                  paddingVertical: 8,
+                  paddingHorizontal: 16,
+                  borderRadius: 8,
+                }}
+              >
+                <Text style={{ color: "white", fontWeight: "600" }}>
+                  Upvote
+                </Text>
+              </TouchableOpacity>
+              {/* <Pressable
                 onPress={() => handleUpvote(issue._id)}
                 className="bg-orange-500 px-4 py-2 rounded-lg active:scale-95"
               >
                 <Text className="text-white font-semibold">Upvote</Text>
-              </TouchableOpacity>
+              </Pressable> */}
+              {/* <TouchableOpacity
+                onPress={() => handleUpvote(issue._id)}
+                className="bg-orange-500 px-4 py-2 rounded-lg active:scale-95"
+              >
+                <Text className="text-white font-semibold">Upvote</Text>
+              </TouchableOpacity> */}
             </View>
           </View>
         ))}

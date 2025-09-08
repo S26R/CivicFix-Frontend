@@ -1,12 +1,14 @@
-import { View, Text,Image ,ScrollView} from 'react-native'
+import { View, Text,Image} from 'react-native'
 import React from 'react'
 import { useState } from 'react'
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect } from 'react'
+import { TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 
 
-const MyReports_dash = () => {
+const MyReports_dash = ({n=3,link=false}) => {
+    const router = useRouter();
     const [QueryData, setQueryData] = useState(
         {
             "issues": [
@@ -165,10 +167,16 @@ const MyReports_dash = () => {
       My Reports
     </Text>
 
-    {QueryData.issues.slice(0, 3).map((issue) => (
-      <View
+    {QueryData.issues.slice(0, n).map((issue) => (
+      <TouchableOpacity
         key={issue._id}
-        className="mb-3 rounded-2xl min-h-5 bg-orange-50 shadow-lg p-3 border border-orange-200"
+        onPress={() => {router.push({pathname:"/ReportsDetails",params:{id:issue._id}})}}
+        disabled={!link}
+        >
+
+        <View
+        key={issue._id}
+        className="mb-3 rounded-2xl min-h-5 bg-orange-50 p-3 border border-orange-200"
         style={{
           shadowColor: "#f97316",
           shadowOffset: { width: 0, height: 4 },
@@ -176,13 +184,13 @@ const MyReports_dash = () => {
           shadowRadius: 6,
           elevation: 6,
         }}
-      >
+        >
         {/* Image */}
         {/* <Image
           source={{ uri: issue.image }}
           className="w-full h-40 rounded-xl mb-3"
           resizeMode="cover"
-        /> */}
+          /> */}
 
         {/* Title */}
         <Text className="text-lg font-semibold text-gray-900 mb-1">
@@ -200,6 +208,7 @@ const MyReports_dash = () => {
           </Text>
         </View>
       </View>
+    </TouchableOpacity>
     ))}
   </View>
   </View>

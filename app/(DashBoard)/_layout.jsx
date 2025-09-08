@@ -23,6 +23,16 @@ const DashLayout = () => {
           ),
         }}
       />
+      <Tabs.Screen
+        name="MyReports"
+        options={{
+          title: "Reports",
+          headerTitle: "My Reports",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="document" size={size} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   )
 }
