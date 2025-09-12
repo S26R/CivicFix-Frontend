@@ -27,7 +27,14 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to register your issue."
+        }
+      ]
+
     ],
     "scheme": "your-app-scheme"
   }
