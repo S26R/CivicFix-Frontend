@@ -23,6 +23,7 @@ export default function RootLayout() {
       <Stack.Screen name="AutorityLogin" options={{title: "Login"}}/>
       <Stack.Screen name="(DashBoard)" options={{headerShown:false}}/>
       <Stack.Screen name="(Reports)" options={{headerShown:false}}/>
+      <Stack.Screen name="(Admin)" options={{headerShown:false}}/>
     </Stack>
   );
 }

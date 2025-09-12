@@ -18,7 +18,7 @@ const Allissues_dash = () => {
         },
         upvotes: 12,
         severity: "critical",
-        status: "in-progress",
+        status: "resolved",
         __v: 0,
         createdAt: "2025-09-06T04:25:34.288Z",
         updatedAt: "2025-09-06T04:25:34.288Z",
@@ -39,7 +39,7 @@ const Allissues_dash = () => {
         },
         upvotes: 50,
         severity: "critical",
-        status: "pending",
+        status: "in-progress",
         __v: 0,
         createdAt: "2025-09-06T04:25:34.292Z",
         updatedAt: "2025-09-06T04:25:34.292Z",
@@ -60,7 +60,7 @@ const Allissues_dash = () => {
         },
         upvotes: 20,
         severity: "moderate",
-        status: "in-progress",
+        status: "raised",
         __v: 0,
         createdAt: "2025-09-06T04:25:34.292Z",
         updatedAt: "2025-09-06T04:25:34.292Z",
@@ -81,7 +81,7 @@ const Allissues_dash = () => {
         },
         upvotes: 5,
         severity: "minor",
-        status: "pending",
+        status: "rejected",
         __v: 0,
         createdAt: "2025-09-06T04:25:34.292Z",
         updatedAt: "2025-09-06T04:25:34.292Z",
@@ -102,7 +102,7 @@ const Allissues_dash = () => {
         },
         upvotes: 8,
         severity: "moderate",
-        status: "pending",
+        status: "assigned",
         __v: 0,
         createdAt: "2025-09-06T04:25:34.292Z",
         updatedAt: "2025-09-06T04:25:34.292Z",
@@ -137,6 +137,16 @@ const Allissues_dash = () => {
     ],
   });
 
+  const statusColors = {
+    verifying: { bg: "bg-yellow-100", text: "text-yellow-700", border: "border-yellow-300" },
+    raised: { bg: "bg-blue-100", text: "text-blue-700", border: "border-blue-300" },
+    "in-progress": { bg: "bg-orange-100", text: "text-orange-700", border: "border-orange-300" },
+    resolved: { bg: "bg-green-100", text: "text-green-700", border: "border-green-300" },
+    rejected: { bg: "bg-red-100", text: "text-red-700", border: "border-red-300" },
+    assigned: { bg: "bg-purple-100", text: "text-purple-700", border: "border-purple-300" },
+  };
+
+
   const handleUpvote = (id) => {
     const updated = QueryData.issues.map((issue) =>
       issue._id === id ? { ...issue, upvotes: issue.upvotes + 1 } : issue
@@ -145,15 +155,18 @@ const Allissues_dash = () => {
   };
   return (
     <View className="flex-1 bg-white ">
-      <View
-        className="flex-1 p-4 m-2 bg-white rounded-2xl shadow-lg border border-orange-200"
-        contentContainerStyle={{ paddingBottom: 50 }}
-      >
-        <Text className="text-2xl font-bold text-orange-600 mb-6">
-          Reported Issues
-        </Text>
+    <View
+      className="flex-1 p-4 m-2 bg-white rounded-2xl shadow-lg border border-orange-200"
+      contentContainerStyle={{ paddingBottom: 50 }}
+    >
+      <Text className="text-2xl font-bold text-orange-600 mb-6">
+        Reported Issues
+      </Text>
 
-        {QueryData.issues.map((issue) => (
+      {QueryData.issues.map((issue) => {
+        const colorScheme = statusColors[issue.status] || statusColors.verifying;
+
+        return (
           <View
             key={issue._id}
             className="mb-5 rounded-2xl bg-orange-50 p-4 border border-orange-200"
@@ -165,17 +178,6 @@ const Allissues_dash = () => {
               elevation: 6,
             }}
           >
-            {/* Image */}
-            {/* <Image
-              source={{
-                uri:
-                  issue.image ||
-                  "https://via.placeholder.com/400x200.png?text=No+Image",
-              }}
-              className="w-full h-40 rounded-xl mb-3"
-              resizeMode="cover"
-            /> */}
-
             {/* Title */}
             <Text className="text-lg font-semibold text-gray-900 mb-1">
               {issue.topic}
@@ -183,6 +185,15 @@ const Allissues_dash = () => {
 
             {/* Description */}
             <Text className="text-gray-600 mb-3">{issue.description}</Text>
+
+            {/* Status Badge */}
+            <View
+              className={`self-start px-3 py-1 rounded-full border ${colorScheme.bg} ${colorScheme.border} mb-3`}
+            >
+              <Text className={`text-sm font-semibold ${colorScheme.text}`}>
+                {issue.status.toUpperCase()}
+              </Text>
+            </View>
 
             {/* Upvote Section */}
             <View className="flex-row items-center justify-between">
@@ -195,34 +206,16 @@ const Allissues_dash = () => {
               <TouchableOpacity
                 onPress={() => handleUpvote(issue._id)}
                 activeOpacity={0.7}
-                style={{
-                  backgroundColor: "#f97316",
-                  paddingVertical: 8,
-                  paddingHorizontal: 16,
-                  borderRadius: 8,
-                }}
+                className="bg-orange-500 px-4 py-2 rounded-lg shadow-md"
               >
-                <Text style={{ color: "white", fontWeight: "600" }}>
-                  Upvote
-                </Text>
+                <Text className="text-white font-semibold">Upvote</Text>
               </TouchableOpacity>
-              {/* <Pressable
-                onPress={() => handleUpvote(issue._id)}
-                className="bg-orange-500 px-4 py-2 rounded-lg active:scale-95"
-              >
-                <Text className="text-white font-semibold">Upvote</Text>
-              </Pressable> */}
-              {/* <TouchableOpacity
-                onPress={() => handleUpvote(issue._id)}
-                className="bg-orange-500 px-4 py-2 rounded-lg active:scale-95"
-              >
-                <Text className="text-white font-semibold">Upvote</Text>
-              </TouchableOpacity> */}
             </View>
           </View>
-        ))}
-      </View>
+        );
+      })}
     </View>
+  </View>
   );
 };
 

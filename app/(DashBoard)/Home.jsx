@@ -10,7 +10,7 @@ import { useState } from "react";
 const Home = () => {
   const [isHovered, setIsHovered] = React.useState(false);
   const onPress = () => {
-    router.push("/ReportIssue");
+    router.push("/AddPost");
   };
   const router = useRouter();
   return (

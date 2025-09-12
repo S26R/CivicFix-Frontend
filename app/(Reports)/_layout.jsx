@@ -15,6 +15,7 @@ const ReportLayouts = () => {
         },
       }}>
         <Stack.Screen name="ReportsDetails" options={{title: "Report Details"}}/>
+        <Stack.Screen name="AddPost" options={{title: "Add Report"}}/>
     </Stack>
   )
 }
