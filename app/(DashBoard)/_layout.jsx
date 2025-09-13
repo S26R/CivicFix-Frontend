@@ -1,10 +1,17 @@
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Tabs } from 'expo-router'
 import { Ionicons } from "@expo/vector-icons";
+import { useAuthStore } from '../../store/useAuthStore';
 
 
 const DashLayout = () => {
+   const loadToken = useAuthStore((state) => state.loadToken);
+  
+    useEffect(() => {
+      // ✅ load token + user when tabs layout mounts
+      loadToken();
+    }, []);
   return (
     <Tabs
     screenOptions={{
@@ -33,6 +40,16 @@ const DashLayout = () => {
           ),
         }}
       />
+       <Tabs.Screen
+              name="Profile"
+              options={{
+                title: "Profile",
+                headerTitle: "CivicFix",
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="person" size={size} color={color} />
+                ),
+              }}
+            />
     </Tabs>
   )
 }

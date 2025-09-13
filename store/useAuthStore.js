@@ -1,0 +1,42 @@
+import { create } from "zustand";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
+
+export const useAuthStore = create((set) => ({
+  token: null,
+  user: null,
+
+  // Load token + decode user on app start
+  loadToken: async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        const decoded = jwtDecode(token);
+        set({ token, user: decoded });
+      }
+    } catch (e) {
+      console.error("Failed to load token:", e);
+    }
+  },
+
+  // Save token + decode user after login
+  login: async (token) => {
+    try {
+      await AsyncStorage.setItem("token", token);
+      const decoded = jwtDecode(token);
+      set({ token, user: decoded });
+    } catch (e) {
+      console.error("Login error:", e);
+    }
+  },
+
+  // Logout and clear everything
+  logout: async () => {
+    try {
+      await AsyncStorage.removeItem("token");
+      set({ token: null, user: null });
+    } catch (e) {
+      console.error("Logout error:", e);
+    }
+  },
+}));
