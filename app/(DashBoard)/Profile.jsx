@@ -15,7 +15,7 @@ export default function Profile() {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      console.log("Fetching profile with token:", token, "and user:", user);
+   
 
       const res = await fetch(`${API_URL}/api/auth/profile/${user.id}`, {
         headers: {
@@ -23,11 +23,12 @@ export default function Profile() {
           "Authorization": `Bearer ${token}`,
         },
       });
-
+      
       const data = await res.json();
+
       if (res.ok) {
         setProfile(data);
-        console.log("Fetched profile data:", data);
+        console.log("Profile data:", data);
       } else {
         console.error("Error fetching profile:", data.msg);
       }

@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 export const useAuthStore = create((set) => ({
   token: null,
   user: null,
+  isReady: false, // NEW flag so we know when token is loaded
 
   // Load token + decode user on app start
   loadToken: async () => {
@@ -12,10 +13,13 @@ export const useAuthStore = create((set) => ({
       const token = await AsyncStorage.getItem("token");
       if (token) {
         const decoded = jwtDecode(token);
-        set({ token, user: decoded });
+        set({ token, user: decoded, isReady: true });
+      } else {
+        set({ isReady: true }); // mark as ready even if no token
       }
     } catch (e) {
       console.error("Failed to load token:", e);
+      set({ isReady: true });
     }
   },
 

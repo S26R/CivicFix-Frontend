@@ -9,10 +9,11 @@ import { useState } from "react";
 
 const Home = () => {
   const [isHovered, setIsHovered] = React.useState(false);
+   const router = useRouter();
   const onPress = () => {
     router.push("/AddPost");
   };
-  const router = useRouter();
+ 
   return (
     <View className="flex-1 bg-white">
       <Pressable
@@ -42,9 +43,9 @@ const Home = () => {
             router.push("/MyReports");
           }}
         >
-          <MyReports_dash>3</MyReports_dash>
+          <MyReports_dash router={router} n={3} />
         </Pressable>
-        <Allissues_dash />
+        <Allissues_dash router={router} />
       </ScrollView>
     </View>
   );
