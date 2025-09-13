@@ -41,7 +41,7 @@ const citizenLogin = () => {
         }
 
         Alert.alert("Success", "Logged in successfully!");
-        router.push("/Home");
+        router.push('/Home'); // Navigate to Home screen
       } else {
         Alert.alert("Error", data.message || "Invalid credentials");
       }
