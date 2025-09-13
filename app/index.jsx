@@ -84,65 +84,6 @@ const Home = () => {
           />
         </View>
 
-        {/* Quick Actions */}
-        <View className="mb-8">
-          <Text className="text-xl font-semibold text-gray-800 mb-4 text-center">
-            Quick Actions
-          </Text>
-          
-          <View className="flex-row justify-between">
-            <Pressable 
-              onPress={() => router.push('/signup')}
-              activeOpacity={0.7}
-              className="flex-1 mr-2"
-            >
-              <View 
-                className="bg-white border-2 border-orange-200 rounded-xl p-4 items-center"
-                style={{
-                  shadowColor: "#FFA500",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 4,
-                  elevation: 3,
-                }}
-              >
-                <Text className="text-2xl mb-2">📝</Text>
-                <Text className="text-orange-600 font-semibold text-center">
-                  Sign Up
-                </Text>
-                <Text className="text-gray-500 text-xs text-center mt-1">
-                  New User?
-                </Text>
-              </View>
-            </Pressable>
-            
-            <Pressable 
-              onPress={() => router.push('/(DashBoard)/Home')}
-              activeOpacity={0.7}
-              className="flex-1 ml-2"
-            >
-              <View 
-                className="bg-white border-2 border-orange-200 rounded-xl p-4 items-center"
-                style={{
-                  shadowColor: "#FFA500",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 4,
-                  elevation: 3,
-                }}
-              >
-                <Text className="text-2xl mb-2">📊</Text>
-                <Text className="text-orange-600 font-semibold text-center">
-                  Dashboard
-                </Text>
-                <Text className="text-gray-500 text-xs text-center mt-1">
-                  Quick Access
-                </Text>
-              </View>
-            </Pressable>
-          </View>
-        </View>
-
         {/* Admin Access - Smaller, Less Prominent */}
         <View className="mb-8">
           <Pressable 
