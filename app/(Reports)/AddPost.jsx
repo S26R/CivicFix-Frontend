@@ -99,7 +99,8 @@ const AddPost = () => {
         <View className="flex-row justify-between mb-6">
           <TouchableOpacity
             onPress={pickImage}
-            className="bg-orange-500 px-4 py-3 rounded-2xl flex-1 mr-2 shadow-lg active:bg-orange-600 flex-row justify-center items-center"
+            className="bg-orange-500 px-4 py-3 rounded-2xl flex-1 mr-2 shadow-lg flex-row justify-center items-center"
+            activeOpacity={0.7}
           >
             <Ionicons
               className="w-7"
@@ -113,7 +114,8 @@ const AddPost = () => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={takePhoto}
-            className="bg-orange-500 px-4 py-3 rounded-2xl flex-1 ml-2 shadow-lg active:bg-orange-600 flex-row justify-center items-center"
+            className="bg-orange-500 px-4 py-3 rounded-2xl flex-1 ml-2 shadow-lg flex-row justify-center items-center"
+            activeOpacity={0.7}
           >
             <Ionicons
               className="w-7"
@@ -174,7 +176,8 @@ const AddPost = () => {
         {/* cancel */}
         <TouchableOpacity
           onPress={() => router.back()}
-          className="bg-gray-200 px-4 py-4 rounded-2xl shadow-slate-400 shadow-lg mb-2 active:bg-gray-400"
+          className="bg-gray-200 px-4 py-4 rounded-2xl shadow-slate-400 shadow-lg mb-2"
+          activeOpacity={0.7}
         >
           <Text className="text-gray-600 text-center font-semibold text-lg">
             Cancel
@@ -184,7 +187,8 @@ const AddPost = () => {
         {/* Submit */}
         <TouchableOpacity
           onPress={handleSubmit}
-          className="bg-green-600 px-4 py-4 rounded-2xl shadow-xl active:bg-green-700"
+          className="bg-green-600 px-4 py-4 rounded-2xl shadow-xl"
+          activeOpacity={0.7}
         >
           <Text className="text-white text-center font-bold text-lg">
             🚀 Submit Report

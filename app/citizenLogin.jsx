@@ -1,8 +1,7 @@
-import { View, Text } from 'react-native'
-import { TextInput, TouchableOpacity, ScrollView } from 'react-native'
-import { useState } from 'react'
-import { useRouter } from 'expo-router'
-import React from 'react'
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import { API_URL } from "@env"; // Correct way to import backend URL from .env
 
 const citizenLogin = () => {
   const router = useRouter();
@@ -10,14 +9,41 @@ const citizenLogin = () => {
     phone: "",
     password: "",
   });
-   const handleChange = (key, value) => {
+
+  const handleChange = (key, value) => {
     setLoginData({ ...loginData, [key]: value });
   };
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Success", "Logged in successfully!");
+        // Optionally, save token if backend returns it
+        // Example: AsyncStorage.setItem("token", data.token);
+        router.push("/dashboard"); // Navigate to dashboard or home screen
+      } else {
+        Alert.alert("Error", data.message || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Unable to connect to server");
+    }
+  };
+
   return (
     <View className="flex-1 justify-center items-center bg-white px-6">
       <View
         className="w-full bg-white rounded-2xl p-6 max-w-xl mt-2 mb-5"
-        contentContainerStyle={{ paddingBottom: 20 }}
         style={{
           shadowColor: "#FFA500",
           shadowOffset: { width: 0, height: 10 },
@@ -56,8 +82,9 @@ const citizenLogin = () => {
 
         {/* Login Button */}
         <TouchableOpacity
-          onPress={() => {console.log("login pressed",loginData)}}
-          className="bg-orange-500 rounded-xl py-3 active:scale-95 transition-transform duration-200 mb-4"
+          onPress={handleLogin} // Call API
+          className="bg-orange-500 rounded-xl py-3 mb-4"
+          activeOpacity={0.7}
         >
           <Text className="text-white text-center text-lg font-semibold">
             Login
@@ -72,7 +99,7 @@ const citizenLogin = () => {
         </TouchableOpacity>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default citizenLogin
+export default citizenLogin;

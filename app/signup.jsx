@@ -4,11 +4,12 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
+import "@env"; // Import backend URL from .env
 
 const signup = () => {
   const [formData, setFormData] = useState({
@@ -27,9 +28,34 @@ const signup = () => {
 
   const router = useRouter();
 
+  // New function to handle signup API call
+  const handleSignup = async () => {
+    try {
+      // Send POST request to backend
+      const response = await fetch(`${API_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Success", "Account created successfully!");
+        router.push("/citizenLogin"); // Navigate to login after signup
+      } else {
+        Alert.alert("Error", data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Unable to connect to server");
+    }
+  };
+
   return (
     <View className="flex-1 justify-center items-center bg-white px-6">
-      {/* Signup Card with orange shadow */}
       <ScrollView
         className="w-full bg-white rounded-2xl p-6 max-w-xl mt-2 mb-5"
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -40,7 +66,6 @@ const signup = () => {
           shadowOpacity: 0.3,
           shadowRadius: 20,
           elevation: 10,
-          
         }}
       >
         <Text className="text-2xl font-bold text-center text-orange-600 mb-6">
@@ -57,9 +82,7 @@ const signup = () => {
           onChangeText={(value) => handleChange("name", value)}
         />
 
-        
-
-        {/* Phone Number */}
+        {/* Phone */}
         <Text className="text-orange-600 mb-1 font-semibold">Phone Number</Text>
         <TextInput
           placeholder="Enter phone number"
@@ -83,7 +106,7 @@ const signup = () => {
           placeholderTextColor="#fb923c"
         />
 
-        {/* Aadhaar Number */}
+        {/* Aadhaar */}
         <Text className="text-orange-600 mb-1 font-semibold">
           Aadhaar Number
         </Text>
@@ -107,7 +130,7 @@ const signup = () => {
           onChangeText={(value) => handleChange("municipality", value)}
         />
 
-        {/* Ward Number */}
+        {/* Ward */}
         <Text className="text-orange-600 mb-1 font-semibold">Ward Number</Text>
         <TextInput
           placeholder="Enter ward number"
@@ -136,8 +159,9 @@ const signup = () => {
 
         {/* Signup Button */}
         <TouchableOpacity
-          className="bg-orange-500 rounded-xl py-3 active:scale-95 transition-transform duration-200 mb-4"
-          onPress={() => console.log("Signup pressed", formData)}
+          className="bg-orange-500 rounded-xl py-3 mb-4"
+          onPress={handleSignup} // Call API now
+          activeOpacity={0.7}
         >
           <Text className="text-white text-center text-lg font-semibold">
             Sign Up

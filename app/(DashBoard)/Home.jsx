@@ -19,12 +19,9 @@ const Home = () => {
         onPress={onPress}
         onHoverIn={() => setIsHovered(true)}
         onHoverOut={() => setIsHovered(false)}
-        className={`flex-row items-center justify-center mx-2 mt-2 px-5 py-3 rounded-xl shadow-md transition-all duration-200 ${
+        className={`flex-row items-center justify-center mx-2 mt-2 px-5 py-3 rounded-xl shadow-md ${
           isHovered ? "bg-orange-600" : "bg-orange-500"
         }`}
-        style={{
-          transform: [{ scale: isHovered ? 1.05 : 1 }], // hover grow effect
-        }}
       >
         <Text className="text-white font-semibold text-lg">Report Issue  </Text>
 

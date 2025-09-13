@@ -77,7 +77,8 @@ const deptLogin = () => {
           onPress={() => {
             console.log("login pressed", loginData);
           }}
-          className="bg-orange-500 rounded-xl py-3 active:scale-95 transition-transform duration-200 mb-4"
+          className="bg-orange-500 rounded-xl py-3 mb-4"
+          activeOpacity={0.7}
         >
           <Text className="text-white text-center text-lg font-semibold">
             Login

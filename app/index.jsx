@@ -7,22 +7,22 @@ const Home = () => {
   return (
     <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
       <Text>Home</Text>
-      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/citizenLogin')}>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}} onPress={()=>router.push('/citizenLogin')}>
         <Text style={{color:'#fff'}}>Login as citizen</Text>
       </Pressable>
-      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/deptLogin')}>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}} onPress={()=>router.push('/deptLogin')}>
         <Text style={{color:'#fff'}}>Login as department</Text>
       </Pressable>
-      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/AutorityLogin')}>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}} onPress={()=>router.push('/AutorityLogin')}>
         <Text style={{color:'#fff'}}>Login as Autority</Text>
       </Pressable>
-      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/signup')}>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}} onPress={()=>router.push('/signup')}>
         <Text style={{color:'#fff'}}>Sign Up</Text>
       </Pressable>
-      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/(DashBoard)/Home')}>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}} onPress={()=>router.push('/(DashBoard)/Home')}>
         <Text style={{color:'#fff'}}>Go to Dashboard</Text>
       </Pressable>
-      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}}onPress={()=>router.push('/(Admin)/home_admin')}>
+      <Pressable style={{marginTop:20, padding:10, backgroundColor:'rgba(62, 110, 177, 0.5)'}} onPress={()=>router.push('/(Admin)/home_admin')}>
         <Text style={{color:'#fff'}}>Admin</Text>
       </Pressable>
     </View>
