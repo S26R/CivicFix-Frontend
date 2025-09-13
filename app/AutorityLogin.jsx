@@ -18,10 +18,10 @@ const AuthorityLogin = () => {
   const handleLogin = async () => {
     try {
       const response = await fetch(`${API_URL}/api/auth/login/authority`, {
-        // 👈 same endpoint as citizen login
+        // 
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(loginData), // 👈 will send {phone, password}
+        body: JSON.stringify(loginData), 
       });
 
       const text = await response.text();
