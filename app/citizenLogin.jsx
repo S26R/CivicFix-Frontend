@@ -1,12 +1,13 @@
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env"; // Correct way to import backend URL from .env
 
 const citizenLogin = () => {
   const router = useRouter();
   const [loginData, setLoginData] = useState({
-    phone: "",
+    identifier: "",
     password: "",
   });
 
@@ -18,26 +19,42 @@ const citizenLogin = () => {
     try {
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),
       });
 
-      const data = await response.json();
+      const text = await response.text(); // read raw response
+      let data;
+      try {
+        data = JSON.parse(text); // parse JSON safely
+      } catch {
+        console.log("Non-JSON response:", text);
+        Alert.alert("Error", "Server returned an unexpected response");
+        return;
+      }
 
       if (response.ok) {
+        // Save token to AsyncStorage
+        if (data.token) {
+          await AsyncStorage.setItem("token", data.token);
+          console.log("Token saved:", data.token); // you can see it in console
+        }
+
         Alert.alert("Success", "Logged in successfully!");
-        // Optionally, save token if backend returns it
-        // Example: AsyncStorage.setItem("token", data.token);
-        router.push("/dashboard"); // Navigate to dashboard or home screen
+        router.push("/dashboard");
       } else {
         Alert.alert("Error", data.message || "Invalid credentials");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Login error:", error);
       Alert.alert("Error", "Unable to connect to server");
     }
+  };
+
+  // Optional: Function to check token
+  const checkToken = async () => {
+    const token = await AsyncStorage.getItem("token");
+    console.log("Saved token:", token);
   };
 
   return (
@@ -60,11 +77,11 @@ const citizenLogin = () => {
         {/* Phone Number */}
         <Text className="text-orange-600 mb-1 font-semibold">Phone Number</Text>
         <TextInput
-          placeholder="Enter phone number"
-          value={loginData.phone}
-          onChangeText={(val) => handleChange("phone", val)}
-          keyboardType="phone-pad"
-          maxLength={10}
+          placeholder="Enter phone number or Aadhaar" // Optional: Update placeholder for clarity
+          value={loginData.identifier}
+          onChangeText={(val) => handleChange("identifier", val)} // ✅ CORRECT
+          keyboardType="numeric" // Use 'numeric' for both phone and Aadhaar
+          // maxLength={12} // Optional: Aadhaar is 12 digits
           className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base text-black"
           placeholderTextColor="#fb923c"
         />
@@ -82,7 +99,7 @@ const citizenLogin = () => {
 
         {/* Login Button */}
         <TouchableOpacity
-          onPress={handleLogin} // Call API
+          onPress={handleLogin}
           className="bg-orange-500 rounded-xl py-3 mb-4"
           activeOpacity={0.7}
         >
