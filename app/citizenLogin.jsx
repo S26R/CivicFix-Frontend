@@ -6,6 +6,7 @@ import { API_URL } from "@env"; // Correct way to import backend URL from .env
 
 const citizenLogin = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false); // Optional: Loading state
   const [loginData, setLoginData] = useState({
     identifier: "",
     password: "",
@@ -17,6 +18,7 @@ const citizenLogin = () => {
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,6 +50,8 @@ const citizenLogin = () => {
     } catch (error) {
       console.error("Login error:", error);
       Alert.alert("Error", "Unable to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,7 +108,7 @@ const citizenLogin = () => {
           activeOpacity={0.7}
         >
           <Text className="text-white text-center text-lg font-semibold">
-            Login
+            {loading ? "Logging in..." : "Login"}
           </Text>
         </TouchableOpacity>
 
