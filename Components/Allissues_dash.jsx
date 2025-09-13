@@ -3,9 +3,10 @@ import React from "react";
 import { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable } from "react-native";
+import { useRouter } from "expo-router";
 
-const Allissues_dash = () => {
+const Allissues_dash = ({button=true}) => {
+  const router = useRouter();
   const [QueryData, setQueryData] = useState({
     issues: [
       {
@@ -154,19 +155,19 @@ const Allissues_dash = () => {
     setQueryData({ issues: updated });
   };
   return (
-    <View className="flex-1 bg-white ">
+    <View className="flex-1 bg-white">
     <View
       className="flex-1 p-4 m-2 bg-white rounded-2xl shadow-lg border border-orange-200"
       contentContainerStyle={{ paddingBottom: 50 }}
     >
-      <Text className="text-2xl font-bold text-orange-600 mb-6">
-        Reported Issues
-      </Text>
+      <Text className="text-2xl font-bold text-orange-600 mb-6">Reported Issues</Text>
 
       {QueryData.issues.map((issue) => {
         const colorScheme = statusColors[issue.status] || statusColors.verifying;
 
         return (
+          <TouchableOpacity key={issue._id} activeOpacity={0.9}
+            onPress={() => {router.push({pathname:"/ReportsDetails",params:{id:issue._id}})}}>
           <View
             key={issue._id}
             className="mb-5 rounded-2xl bg-orange-50 p-4 border border-orange-200"
@@ -179,9 +180,7 @@ const Allissues_dash = () => {
             }}
           >
             {/* Title */}
-            <Text className="text-lg font-semibold text-gray-900 mb-1">
-              {issue.topic}
-            </Text>
+            <Text className="text-lg font-semibold text-gray-900 mb-1">{issue.topic}</Text>
 
             {/* Description */}
             <Text className="text-gray-600 mb-3">{issue.description}</Text>
@@ -199,24 +198,26 @@ const Allissues_dash = () => {
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center">
                 <Ionicons name="arrow-up-circle" size={22} color="#f97316" />
-                <Text className="ml-2 text-gray-800 font-medium">
-                  {issue.upvotes} Upvotes
-                </Text>
+                <Text className="ml-2 text-gray-800 font-medium">{issue.upvotes} Upvotes</Text>
               </View>
-              <TouchableOpacity
-                onPress={() => handleUpvote(issue._id)}
-                activeOpacity={0.7}
-                className="bg-orange-500 px-4 py-2 rounded-lg shadow-md"
-              >
-                <Text className="text-white font-semibold">Upvote</Text>
-              </TouchableOpacity>
+
+              {button && (
+                <TouchableOpacity
+                  onPress={() => handleUpvote(issue._id)}
+                  activeOpacity={0.7}
+                  className="bg-orange-500 px-4 py-2 rounded-lg shadow-md"
+                >
+                  <Text className="text-white font-semibold">Upvote</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
+          </TouchableOpacity>
         );
       })}
     </View>
   </View>
   );
-};
+}
 
 export default Allissues_dash;
