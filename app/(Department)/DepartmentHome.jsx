@@ -97,7 +97,9 @@ export default function DepartmentHome(link = true) {
                     <Text className="text-lg font-semibold text-gray-900 mb-1">
                       {issue.topic}
                     </Text>
-
+                    <Text>
+                        {issue._id}
+                    </Text>
                     <Text className="text-gray-600 mb-2">
                       {issue.description}
                     </Text>
