@@ -7,11 +7,17 @@ import { useAuthStore } from '../../store/useAuthStore';
 
 const DashLayout = () => {
    const loadToken = useAuthStore((state) => state.loadToken);
+   const isReady = useAuthStore((state) => state.isReady);
+ useEffect(() => {
+     // ✅ load token + user when tabs layout mounts
+     loadToken();
+   }, []); 
+   // Only render tabs after token is loaded
+   if (!isReady) {
+     return null// or a loading spinner
+   }
+
   
-    useEffect(() => {
-      // ✅ load token + user when tabs layout mounts
-      loadToken();
-    }, []);
   return (
     <Tabs
     screenOptions={{

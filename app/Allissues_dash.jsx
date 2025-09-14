@@ -4,16 +4,17 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { API_URL, MAPBOX_API_KEY } from "@env";
-import StatusBadge from "./StatusBadge.jsx";
+import StatusBadge from "../Components/StatusBadge.jsx";
 import Toast from "react-native-toast-message";
+import { useRouter } from "expo-router";
 
-const Allissues_dash = ({ router, button = true }) => {
+const Allissues_dash = ({  button = true }) => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState(null);
   const [locationErrorMsg, setLocationErrorMsg] = useState(null);
   const [votingIssueId, setVotingIssueId] = useState(null); // track which issue is being voted
-
+const router=useRouter();
   const { token, user } = useAuthStore();
 
   useEffect(() => {
@@ -180,8 +181,9 @@ const Allissues_dash = ({ router, button = true }) => {
             return (
               <TouchableOpacity
                 key={issue._id}
-                onPress={() => router.push({ pathname: "/ReportsDetails", params: { id: issue._id } })}
+                onPress={() => router.push(`/ReportsDetails?id=${issue._id}`)}
               >
+              
                 <View
                   className="mb-3 rounded-2xl bg-orange-50 p-3 border border-orange-200"
                   style={{

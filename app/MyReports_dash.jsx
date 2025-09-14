@@ -4,12 +4,13 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { useAuthStore } from "../store/useAuthStore.js"; // adjust path
 import { API_URL } from "@env";
-import StatusBadge from "./StatusBadge.jsx";
+import StatusBadge from "../Components/StatusBadge.jsx";
+import { Link, useRouter } from "expo-router";
 
-const MyReports_dash = ({ router, n = 3, link = false }) => {
+const MyReports_dash = ({  n = 3, link = false }) => {
  
   const { token, user } = useAuthStore();
-
+  const router=useRouter();
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -74,14 +75,10 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
             return (
               <TouchableOpacity
                 key={issue._id}
-                onPress={() =>
-                  router.push({
-                    pathname: "/ReportsDetails",
-                    params: { id: issue._id },
-                  })
-                }
-                disabled={!link}
+                onPress={() => router.push(`/ReportsDetails?id=${issue._id}`)}
               >
+                disabled={!link}
+              
                 <View
                   className="mb-3 rounded-2xl bg-orange-50 p-3 border border-orange-200"
                   style={{

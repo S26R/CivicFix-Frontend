@@ -28,7 +28,10 @@ const home_admin = () => {
     showsVerticalScrollIndicator={false}
   >
     {/* Allissues_dash */}
-  <Allissues_dash button={false}/>
+  {/* <Allissues_dash button={false}/> */}
+
+
+ <Text>Note:Will have a separate issue panel for authority</Text> 
   </ScrollView>
 </View>
   )

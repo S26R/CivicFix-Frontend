@@ -32,6 +32,16 @@ const AdminLayout = () => {
           ),
         }}
       />
+      <Tabs.Screen
+        name="Department_management"
+        options={{
+          title: "Department Management",
+          headerTitle: "CivicFix",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="podium" size={size} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   )
 }
