@@ -64,7 +64,7 @@ const Signup = () => {
 
           // You can decide logic by phone prefix or let them choose here.
           // For now just redirect to citizen login:
-          router.push("/citizenLogin");
+          router.push("/index");
         } else {
           Alert.alert("Error", data.msg || "Something went wrong");
         }
