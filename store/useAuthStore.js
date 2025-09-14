@@ -37,7 +37,11 @@ export const useAuthStore = create((set) => ({
   // Logout and clear everything
   logout: async () => {
     try {
+      await AsyncStorage.removeItem("role");
+      await AsyncStorage.removeItem("authorityToken"); // in case of authority login
       await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("deptToken"); // in case of dept login
+      await AsyncStorage.removeItem("dept"); // in case of dept login
       set({ token: null, user: null });
     } catch (e) {
       console.error("Logout error:", e);

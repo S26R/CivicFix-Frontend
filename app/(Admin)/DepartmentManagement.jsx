@@ -2,11 +2,12 @@ import { View, Text, TouchableOpacity, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const DepartmentHome = () => {
   const router = useRouter();
   const [dept, setDept] = useState("");
-
+  const { logout } = useAuthStore();
   // Get saved department & token on mount
   useEffect(() => {
     const fetchDept = async () => {
@@ -20,11 +21,9 @@ const DepartmentHome = () => {
     fetchDept();
   }, []);
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("deptToken");
-    await AsyncStorage.removeItem("dept");
-    Alert.alert("Logged out");
-    router.replace("/deptLogin"); // back to login
+   const handleLogout = async () => {
+    await logout();
+    router.replace("/");
   };
 
   return (
@@ -40,11 +39,11 @@ const DepartmentHome = () => {
         }}
       >
         <Text className="text-3xl font-bold text-center text-orange-600 mb-6">
-          Department Dashboard
+          Department Management
         </Text>
 
         <Text className="text-lg text-center mb-6 text-gray-700">
-          Welcome to the Department Panel
+          Welcome to the Department Management Panel
           {dept ? ` — ${dept}` : ""}
         </Text>
 

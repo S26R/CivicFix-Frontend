@@ -6,6 +6,7 @@ import { API_URL } from "@env"; // import backend URL
 
 const deptLogin = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false); // Optional: Loading state
   const [loginData, setLoginData] = useState({
     phone: "", 
     password: "",
@@ -17,6 +18,7 @@ const deptLogin = () => {
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_URL}/api/auth/login/department`, {
         // 
         method: "POST",
@@ -36,17 +38,19 @@ const deptLogin = () => {
 
       if (response.ok) {
         if (data.token) {
-          await AsyncStorage.setItem("authorityToken", data.token);
-          console.log("Authority token saved:", data.token);
+          await AsyncStorage.setItem("deptToken", data.token);
+          console.log("Department token saved:", data.token);
         }
         Alert.alert("Success", "Logged in successfully!");
-        router.push("/DepartmentHome");
+        router.push("/(Department)/DepartmentHome");
       } else {
         Alert.alert("Error", data.message || "Invalid credentials");
       }
     } catch (error) {
       console.error("Login error:", error);
       Alert.alert("Error", "Unable to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,8 +98,8 @@ const deptLogin = () => {
           className="bg-orange-500 rounded-xl py-3 mb-4"
           activeOpacity={0.7}
         >
-          <Text className="text-white text-center text-lg font-semibold">
-            Login
+          <Text className={`text-white text-center text-lg font-semibold ${loading ? "animate-pulse" : ""}`}>
+           {loading ? "Logging in..." : "Login"}
           </Text>
         </TouchableOpacity>
 

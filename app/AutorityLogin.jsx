@@ -6,6 +6,7 @@ import { API_URL } from "@env"; // import backend URL
 
 const AuthorityLogin = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false); // Optional: Loading state
   const [loginData, setLoginData] = useState({
     phone: "", 
     password: "",
@@ -17,6 +18,7 @@ const AuthorityLogin = () => {
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_URL}/api/auth/login/authority`, {
         // 
         method: "POST",
@@ -47,6 +49,8 @@ const AuthorityLogin = () => {
     } catch (error) {
       console.error("Login error:", error);
       Alert.alert("Error", "Unable to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,8 +98,8 @@ const AuthorityLogin = () => {
           className="bg-orange-500 rounded-xl py-3 mb-4"
           activeOpacity={0.7}
         >
-          <Text className="text-white text-center text-lg font-semibold">
-            Login
+          <Text className={`text-white text-center text-lg font-semibold ${loading ? "animate-pulse" : ""}`}>
+            {loading ? "Logging in..." : "Login"}
           </Text>
         </TouchableOpacity>
 
