@@ -24,15 +24,21 @@ export const useAuthStore = create((set) => ({
   },
 
   // Save token + decode user after login
-  login: async (token) => {
-    try {
-      await AsyncStorage.setItem("token", token);
-      const decoded = jwtDecode(token);
-      set({ token, user: decoded });
-    } catch (e) {
-      console.error("Login error:", e);
+ login: async (token) => {
+  try {
+    await AsyncStorage.setItem("token", token);
+    const decoded = jwtDecode(token);
+    set({ token, user: decoded });
+
+    // Optional: save role separately for quick access
+    if (decoded.role) {
+      await AsyncStorage.setItem("role", decoded.role);
     }
-  },
+  } catch (e) {
+    console.error("Login error:", e);
+  }
+},
+
 
   // Logout and clear everything
   logout: async () => {

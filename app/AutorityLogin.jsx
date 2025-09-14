@@ -1,29 +1,25 @@
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from "@env"; // import backend URL
+import { API_URL } from "@env";
+import { useAuthStore } from "../store/useAuthStore";
+
 
 const AuthorityLogin = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false); // Optional: Loading state
-  const [loginData, setLoginData] = useState({
-    phone: "", 
-    password: "",
-  });
+  const { login } = useAuthStore(); // Use Zustand store
+  const [loading, setLoading] = useState(false);
+  const [loginData, setLoginData] = useState({ phone: "", password: "" });
 
-  const handleChange = (key, value) => {
-    setLoginData({ ...loginData, [key]: value });
-  };
+  const handleChange = (key, value) => setLoginData({ ...loginData, [key]: value });
 
   const handleLogin = async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/api/auth/login/authority`, {
-        // 
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(loginData), 
+        body: JSON.stringify(loginData),
       });
 
       const text = await response.text();
@@ -36,13 +32,12 @@ const AuthorityLogin = () => {
         return;
       }
 
-      if (response.ok) {
-        if (data.token) {
-          await AsyncStorage.setItem("authorityToken", data.token);
-          console.log("Authority token saved:", data.token);
-        }
+      if (response.ok && data.token) {
+        // Save token in Zustand store (this will decode and store role automatically)
+        await login(data.token);
+
         Alert.alert("Success", "Logged in successfully!");
-        router.push("/home_admin");
+        router.replace("/home_admin"); // Replace so user can't go back
       } else {
         Alert.alert("Error", data.message || "Invalid credentials");
       }
@@ -70,7 +65,6 @@ const AuthorityLogin = () => {
           Login as Authority
         </Text>
 
-        {/* Phone */}
         <Text className="text-orange-600 mb-1 font-semibold">Phone Number</Text>
         <TextInput
           placeholder="Enter phone number"
@@ -81,7 +75,6 @@ const AuthorityLogin = () => {
           placeholderTextColor="#fb923c"
         />
 
-        {/* Password */}
         <Text className="text-orange-600 mb-1 font-semibold">Password</Text>
         <TextInput
           placeholder="Enter password"
@@ -92,7 +85,6 @@ const AuthorityLogin = () => {
           placeholderTextColor="#fb923c"
         />
 
-        {/* Login Button */}
         <TouchableOpacity
           onPress={handleLogin}
           className="bg-orange-500 rounded-xl py-3 mb-4"
@@ -103,7 +95,6 @@ const AuthorityLogin = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Don’t have account? */}
         <TouchableOpacity onPress={() => router.push("/signup")}>
           <Text className="text-orange-600 text-center text-base">
             Don’t have an account? Sign Up
