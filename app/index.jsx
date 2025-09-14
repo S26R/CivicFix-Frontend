@@ -85,27 +85,7 @@ const Home = () => {
         </View>
 
         {/* Admin Access - Smaller, Less Prominent */}
-        <View className="mb-8">
-          <Pressable 
-            onPress={() => router.push('/(Admin)/home_admin')}
-            activeOpacity={0.7}
-            className="w-full"
-          >
-            <View 
-              className="bg-gray-100 border border-gray-200 rounded-lg p-3 flex-row items-center justify-center"
-              style={{
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.1,
-                shadowRadius: 2,
-                elevation: 2,
-              }}
-            >
-              <Text className="text-lg mr-2">🔧</Text>
-              <Text className="text-gray-600 font-medium">Admin Access</Text>
-            </View>
-          </Pressable>
-        </View>
+       
 
         {/* Footer */}
         <View className="items-center pb-8">

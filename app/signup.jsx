@@ -9,17 +9,18 @@ import {
 import React, { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
-import "@env"; // Import backend URL from .env
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // 👈 new
 
-const signup = () => {
+const Signup = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    aadhaar: "",
-    phone: "",
     email: "",
-    municipality: "",
-    ward: "",
-    subArea: "",
+    phone: "",
+    aadhaar: "",
+    password: "",
+    wardNumber: "",
+    villageArea: "",
+    location: "",
   });
 
   const handleChange = (key, value) => {
@@ -28,10 +29,8 @@ const signup = () => {
 
   const router = useRouter();
 
-  // New function to handle signup API call
   const handleSignup = async () => {
     try {
-      // Send POST request to backend
       const response = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
@@ -43,10 +42,32 @@ const signup = () => {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert("Success", "Account created successfully!");
-        router.push("/citizenLogin"); // Navigate to login after signup
+        // ✅ If backend sends token & role on signup:
+        if (data.token) {
+          await AsyncStorage.setItem("token", data.token);
+        }
+
+        // Decide where to go based on role
+        if (data.role === "department") {
+          router.push("/deptLanding");
+        } else if (data.role === "authority") {
+          router.push("/home_admin");
+        } else {
+          router.push("/citizenLogin");
+        }
+
+        Alert.alert("Success", data.msg || "Account created successfully!");
       } else {
-        Alert.alert("Error", data.message || "Something went wrong");
+        // User already exists case
+        if (data.msg && data.msg.toLowerCase().includes("already exists")) {
+          Alert.alert("Account exists", "Redirecting to login…");
+
+          // You can decide logic by phone prefix or let them choose here.
+          // For now just redirect to citizen login:
+          router.push("/citizenLogin");
+        } else {
+          Alert.alert("Error", data.msg || "Something went wrong");
+        }
       }
     } catch (error) {
       console.error(error);
@@ -72,14 +93,16 @@ const signup = () => {
           Create Account
         </Text>
 
-        {/* Name */}
-        <Text className="text-orange-600 mb-1 font-semibold">Name</Text>
+        {/* Email */}
+        <Text className="text-orange-600 mb-1 font-semibold">Email</Text>
         <TextInput
-          placeholder="Enter your name"
-          className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base"
+          placeholder="Enter your email"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={formData.email}
+          onChangeText={(val) => handleChange("email", val)}
+          className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base text-black"
           placeholderTextColor="#fb923c"
-          value={formData.name}
-          onChangeText={(value) => handleChange("name", value)}
         />
 
         {/* Phone */}
@@ -94,22 +117,8 @@ const signup = () => {
           onChangeText={(value) => handleChange("phone", value)}
         />
 
-        {/* Email */}
-        <Text className="text-orange-600 mb-1 font-semibold">Email</Text>
-        <TextInput
-          placeholder="Enter your email"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={formData.email}
-          onChangeText={(val) => handleChange("email", val)}
-          className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base text-black"
-          placeholderTextColor="#fb923c"
-        />
-
         {/* Aadhaar */}
-        <Text className="text-orange-600 mb-1 font-semibold">
-          Aadhaar Number
-        </Text>
+        <Text className="text-orange-600 mb-1 font-semibold">Aadhaar Number</Text>
         <TextInput
           placeholder="Enter Aadhaar Number"
           keyboardType="number-pad"
@@ -120,17 +129,28 @@ const signup = () => {
           onChangeText={(value) => handleChange("aadhaar", value)}
         />
 
-        {/* Municipality */}
-        <Text className="text-orange-600 mb-1 font-semibold">Municipality</Text>
+        {/* Password */}
+        <Text className="text-orange-600 mb-1 font-semibold">Password</Text>
         <TextInput
-          placeholder="Enter municipality"
+          placeholder="Enter password"
+          secureTextEntry
           className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base"
           placeholderTextColor="#fb923c"
-          value={formData.municipality}
-          onChangeText={(value) => handleChange("municipality", value)}
+          value={formData.password}
+          onChangeText={(value) => handleChange("password", value)}
         />
 
-        {/* Ward */}
+        {/* Village Area */}
+        <Text className="text-orange-600 mb-1 font-semibold">Village Area</Text>
+        <TextInput
+          placeholder="Enter village area"
+          className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base"
+          placeholderTextColor="#fb923c"
+          value={formData.villageArea}
+          onChangeText={(value) => handleChange("villageArea", value)}
+        />
+
+        {/* Ward Number */}
         <Text className="text-orange-600 mb-1 font-semibold">Ward Number</Text>
         <TextInput
           placeholder="Enter ward number"
@@ -138,19 +158,19 @@ const signup = () => {
           maxLength={3}
           className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base"
           placeholderTextColor="#fb923c"
-          value={formData.ward}
-          onChangeText={(value) => handleChange("ward", value)}
+          value={formData.wardNumber}
+          onChangeText={(value) => handleChange("wardNumber", value)}
         />
 
-        {/* Sub-Area */}
-        <Text className="text-orange-600 mb-1 font-semibold">Sub-Area</Text>
+        {/* Location */}
+        <Text className="text-orange-600 mb-1 font-semibold">Location</Text>
         <View className="border border-orange-300 rounded-xl mb-6 overflow-hidden">
           <Picker
-            selectedValue={formData.subArea}
-            onValueChange={(value) => handleChange("subArea", value)}
+            selectedValue={formData.location}
+            onValueChange={(value) => handleChange("location", value)}
             className="px-4 py-3 text-base"
           >
-            <Picker.Item label="Select Sub-Area" value="" />
+            <Picker.Item label="Select Location" value="" />
             <Picker.Item label="Sub-Area 1" value="sub1" />
             <Picker.Item label="Sub-Area 2" value="sub2" />
             <Picker.Item label="Sub-Area 3" value="sub3" />
@@ -160,7 +180,7 @@ const signup = () => {
         {/* Signup Button */}
         <TouchableOpacity
           className="bg-orange-500 rounded-xl py-3 mb-4"
-          onPress={handleSignup} // Call API now
+          onPress={handleSignup}
           activeOpacity={0.7}
         >
           <Text className="text-white text-center text-lg font-semibold">
@@ -179,4 +199,4 @@ const signup = () => {
   );
 };
 
-export default signup;
+export default Signup;
