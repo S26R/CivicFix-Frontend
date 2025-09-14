@@ -49,7 +49,7 @@ const HomeAdmin = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          "http://localhost:5000/api/authority/dashboard/analytics",
+          `${API_URL}/api/authority/dashboard/analytics`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
