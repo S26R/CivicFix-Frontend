@@ -33,7 +33,7 @@ const AdminLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="Department_management"
+        name="DepartmentManagement"
         options={{
           title: "Department Management",
           headerTitle: "CivicFix",
