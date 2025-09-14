@@ -1,3 +1,5 @@
+import "mapbox-gl/dist/mapbox-gl.css";
+
 import { Pressable, Text, View, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import React from 'react'

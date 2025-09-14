@@ -1,8 +1,25 @@
 import { Stack } from "expo-router";
 import "../global.css";
 import Toast from "react-native-toast-message";
+import { useAuthStore } from "../store/useAuthStore";
+import { ActivityIndicator, View } from "react-native-web";
+import { useEffect } from "react";
 
 export default function RootLayout() {
+   const { init, isReady } = useAuthStore();
+
+  useEffect(() => {
+    init(); // load token once
+  }, []);
+
+  if (!isReady) {
+    // while token loads, show loader
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
   return (
     <>
       <Stack

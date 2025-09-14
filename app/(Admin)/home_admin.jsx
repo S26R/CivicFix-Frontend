@@ -1,42 +1,184 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
+import { useAuthStore } from "../../store/useAuthStore";
+import { API_URL } from "@env";
+import { Animated } from "react-native";
+
+const AnimatedNumber = ({ value, style }) => {
+  const animatedValue = React.useRef(new Animated.Value(0)).current;
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    Animated.timing(animatedValue, {
+      toValue: value,
+      duration: 1000,
+      useNativeDriver: false,
+    }).start();
+    const listener = animatedValue.addListener(({ value }) => {
+      setDisplayValue(Math.floor(value));
+    });
+    return () => {
+      animatedValue.removeListener(listener);
+    };
+  }, [value]);
+
+  return <Text style={style}>{displayValue}</Text>;
+};
 
 const HomeAdmin = () => {
   const router = useRouter();
+  const { user, token } = useAuthStore();
+
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [citizenCount, setCitizenCount] = useState(0);
+  const [departmentCount, setDepartmentCount] = useState(0);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchAnalytics = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          "http://localhost:5000/api/authority/dashboard/analytics",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch analytics");
+
+        const data = await res.json();
+        setAnalytics(data.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    const fetchCounts = async () => {
+      try {
+        const resCitizens = await fetch(
+          `${API_URL}/api/authority/getAllcitizen`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const dataCitizens = await resCitizens.json();
+        setCitizenCount(dataCitizens?.length || 0);  
+          
+        const resDepartments = await fetch(
+          `${API_URL}/api/authority/getAlldepartment`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const dataDepartments = await resDepartments.json();
+        setDepartmentCount(dataDepartments?.length || 0);
+        
+      } catch (err) {
+        console.log("Error fetching user counts:", err);
+      }
+    };
+
+    fetchCounts();
+    fetchAnalytics();
+  }, [token]);
+
+  if (user?.role !== "authority" || !token) {
+    router.replace("/");
+    return null;
+  }
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color="#f4511e" />
+        <Text className="mt-2 text-gray-500">Loading analytics...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-red-500">Error: {error}</Text>
+      </View>
+    );
+  }
+
+  const total = analytics?.total || 0;
+  const byStatus = analytics?.byStatus || {};
+
+  const cards = [
+    { title: "Total Reports", value: total, color: "blue", path: "/admin/TotalIssues" },
+    { title: "Raised Reports", value: byStatus["raised"] || 0, color: "yellow", path: "/admin/RaisedIssues" },
+    { title: "In Progress", value: byStatus["in-progress"] || 0, color: "orange", path: "/admin/InProgressIssues" },
+    { title: "Assigned Reports", value: byStatus["assigned"] || 0, color: "purple", path: "/admin/AssignedIssues" },
+    { title: "Resolved Reports", value: byStatus["resolved"] || 0, color: "green", path: "/admin/ResolvedIssues" },
+    { title: "Rejected Reports", value: byStatus["rejected"] || 0, color: "red", path: "/admin/RejectedIssues" },
+  ];
 
   return (
-    <View className="flex-1 bg-white p-4" contentContainerStyle={{ paddingBottom: 20 }}>
+    <View className="flex-1 bg-white p-4">
       <Text className="text-3xl font-bold text-orange-600 mb-4">Reports Management</Text>
-
-      {/* Summary Cards */}
-      <View className="flex-row justify-between mb-6 mt-3">
-        <TouchableOpacity
-          onPress={() => router.push("/admin/TotalIssues")}
-          className="flex-1 mx-1 bg-blue-100 rounded-2xl border border-blue-200 p-4 shadow-md max-w-xs"
-        >
-          <Text className="text-gray-500 text-sm">Total Issues</Text>
-          <Text className="text-2xl font-bold text-blue-700">15</Text>
-        </TouchableOpacity>
-
-        <View className="flex-1 mx-1 bg-green-100 rounded-2xl border border-green-200 p-4 shadow-md">
-          <Text className="text-gray-500 text-sm">Avg Response</Text>
-          <Text className="text-2xl font-bold text-green-600">7 hrs</Text>
-        </View>
-
-        <View className="flex-1 mx-1 bg-orange-100 rounded-2xl border border-orange-200 p-4 shadow-md">
-          <Text className="text-gray-500 text-sm">In Progress</Text>
-          <Text className="text-2xl font-bold text-orange-600">9</Text>
-        </View>
-      </View>
 
       <ScrollView
         className="bg-white flex-1"
         contentContainerStyle={{ paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Placeholder */}
-        <Text>Note: Will have a separate issue panel for authority</Text>
+        <View className="flex-row flex-wrap justify-between">
+          {cards.map((card, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => router.push(card.path)}
+              className={`w-[48%] mb-4 bg-${card.color}-100 rounded-2xl border border-${card.color}-200 p-4 shadow-md`}
+            >
+              <Text className="text-gray-500 text-sm">{card.title}</Text>
+              <AnimatedNumber
+                value={card.value}
+                style={{ fontSize: 24, fontWeight: "bold", color: `${card.color}-700` }}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View className="mt-8">
+          <Text className="text-2xl font-bold text-orange-600 mb-4">User Management</Text>
+
+          <View className="flex-row justify-between">
+            <TouchableOpacity
+              onPress={() => router.push("/admin/Citizens")}
+              className="flex-1 mx-1 bg-indigo-100 rounded-2xl border border-indigo-200 p-4 shadow-md"
+            >
+              <Text className="text-gray-500 text-sm">Active Citizens</Text>
+              <AnimatedNumber
+                value={citizenCount}
+                style={{ fontSize: 24, fontWeight: "bold", color: "#3730a3" }}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => router.push("/admin/Departments")}
+              className="flex-1 mx-1 bg-pink-100 rounded-2xl border border-pink-200 p-4 shadow-md"
+            >
+              <Text className="text-gray-500 text-sm">Active Departments</Text>
+              <AnimatedNumber
+                value={departmentCount}
+                style={{ fontSize: 24, fontWeight: "bold", color: "#be185d" }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
     </View>
   );
