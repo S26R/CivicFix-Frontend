@@ -1,6 +1,7 @@
 import { Pressable, Text, View, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import React from 'react'
+import { Ionicons } from '@expo/vector-icons'
 
 const Home = () => {
   const router = useRouter();
@@ -23,7 +24,12 @@ const Home = () => {
         }}
       >
         <View className="flex-row items-center mb-2">
-          <Text className="text-3xl mr-3">{icon}</Text>
+              <Ionicons
+                className="w-7"
+                name={icon}
+                size={25}
+                color="#fff"
+              />
           <Text className="text-white text-xl font-bold flex-1">{title}</Text>
         </View>
         <Text className="text-white text-sm opacity-90">{description}</Text>
@@ -62,7 +68,7 @@ const Home = () => {
           <LoginCard
             title="Citizen Portal"
             description="Report issues, track complaints, and stay updated on city services"
-            icon="👤"
+            icon="people-outline"
             bgColor="#EA580C"
             onPress={() => router.push('/citizenLogin')}
           />
@@ -70,7 +76,7 @@ const Home = () => {
           <LoginCard
             title="Department Access"
             description="Manage assignments, update status, and resolve citizen complaints"
-            icon="🏢"
+            icon="business-outline"
             bgColor="#DC2626"
             onPress={() => router.push('/deptLogin')}
           />
@@ -78,7 +84,7 @@ const Home = () => {
           <LoginCard
             title="Authority Dashboard"
             description="Oversee operations, monitor performance, and ensure accountability"
-            icon="⚖️"
+            icon="shield-checkmark-outline"
             bgColor="#7C2D12"
             onPress={() => router.push('/AutorityLogin')}
           />

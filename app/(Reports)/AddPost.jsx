@@ -191,7 +191,7 @@ const AddPost = () => {
           activeOpacity={0.7}
         >
           <Text className="text-white text-center font-bold text-lg">
-            🚀 Submit Report
+             Submit Report
           </Text>
         </TouchableOpacity>
       </ScrollView>

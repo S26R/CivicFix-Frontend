@@ -95,11 +95,7 @@ const AuthorityLogin = () => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push("/signup")}>
-          <Text className="text-orange-600 text-center text-base">
-            Don’t have an account? Sign Up
-          </Text>
-        </TouchableOpacity>
+       
       </View>
     </View>
   );

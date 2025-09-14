@@ -17,7 +17,7 @@ const DepartmentLayout = () => {
        <Tabs.Screen
     name="DepartmentHome"
   options={{
-    title: "DepartmentHome",
+    title: "Department Home",
     headerTitle: "CivicFix",
     tabBarIcon: ({ color, size }) => (
       <Ionicons name="home" size={size} color={color} />
