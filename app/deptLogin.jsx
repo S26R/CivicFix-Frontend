@@ -1,29 +1,26 @@
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from "@env"; // import backend URL
+import { API_URL } from "@env"; // backend URL
+import { useAuthStore } from "../store/useAuthStore";
 
-const deptLogin = () => {
+
+const DeptLogin = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false); // Optional: Loading state
-  const [loginData, setLoginData] = useState({
-    phone: "", 
-    password: "",
-  });
+  const { login } = useAuthStore(); // use Zustand store
+  const [loading, setLoading] = useState(false);
+  const [loginData, setLoginData] = useState({ phone: "", password: "" });
 
-  const handleChange = (key, value) => {
-    setLoginData({ ...loginData, [key]: value });
-  };
+  const handleChange = (key, value) => setLoginData({ ...loginData, [key]: value });
 
   const handleLogin = async () => {
     try {
       setLoading(true);
+
       const response = await fetch(`${API_URL}/api/auth/login/department`, {
-        // 
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(loginData), 
+        body: JSON.stringify(loginData),
       });
 
       const text = await response.text();
@@ -36,13 +33,12 @@ const deptLogin = () => {
         return;
       }
 
-      if (response.ok) {
-        if (data.token) {
-          await AsyncStorage.setItem("deptToken", data.token);
-          console.log("Department token saved:", data.token);
-        }
+      if (response.ok && data.token) {
+        // Store token and decoded user in Zustand
+        await login(data.token);
+
         Alert.alert("Success", "Logged in successfully!");
-        router.push("/(Department)/DepartmentHome");
+        router.replace("/(Department)/DepartmentHome"); // replace so user cannot go back
       } else {
         Alert.alert("Error", data.message || "Invalid credentials");
       }
@@ -99,11 +95,11 @@ const deptLogin = () => {
           activeOpacity={0.7}
         >
           <Text className={`text-white text-center text-lg font-semibold ${loading ? "animate-pulse" : ""}`}>
-           {loading ? "Logging in..." : "Login"}
+            {loading ? "Logging in..." : "Login"}
           </Text>
         </TouchableOpacity>
 
-        {/* Don’t have account? */}
+        {/* Signup link */}
         <TouchableOpacity onPress={() => router.push("/signup")}>
           <Text className="text-orange-600 text-center text-base">
             Don’t have an account? Sign Up
@@ -114,4 +110,4 @@ const deptLogin = () => {
   );
 };
 
-export default deptLogin;
+export default DeptLogin;
