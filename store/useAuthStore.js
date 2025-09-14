@@ -1,3 +1,4 @@
+// store/useAuthStore.js
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
@@ -5,17 +6,17 @@ import { jwtDecode } from "jwt-decode";
 export const useAuthStore = create((set) => ({
   token: null,
   user: null,
-  isReady: false, // NEW flag so we know when token is loaded
-
+  isReady: false,
+  
   // Load token + decode user on app start
   loadToken: async () => {
     try {
-      const token = await AsyncStorage.getItem("token");
+      const token = await AsyncStorage.getItem("civic-auth-token");
       if (token) {
         const decoded = jwtDecode(token);
-        set({ token, user: decoded, isReady: true });
+        set({ token, user: decoded, role: decoded.role, isReady: true });
       } else {
-        set({ isReady: true }); // mark as ready even if no token
+        set({ isReady: true });
       }
     } catch (e) {
       console.error("Failed to load token:", e);
@@ -23,32 +24,25 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  // Save token + decode user after login
- login: async (token) => {
-  try {
-    await AsyncStorage.setItem("token", token);
-    const decoded = jwtDecode(token);
-    set({ token, user: decoded });
+  // Init wrapper
+  init: async () => {
+    await useAuthStore.getState().loadToken();
+  },
 
-    // Optional: save role separately for quick access
-    if (decoded.role) {
-      await AsyncStorage.setItem("role", decoded.role);
+  login: async (token) => {
+    try {
+      await AsyncStorage.setItem("civic-auth-token", token);
+      const decoded = jwtDecode(token);
+      set({ token, user: decoded, role: decoded.role });
+    } catch (e) {
+      console.error("Login error:", e);
     }
-  } catch (e) {
-    console.error("Login error:", e);
-  }
-},
+  },
 
-
-  // Logout and clear everything
   logout: async () => {
     try {
-      await AsyncStorage.removeItem("role");
-      await AsyncStorage.removeItem("authorityToken"); // in case of authority login
-      await AsyncStorage.removeItem("token");
-      await AsyncStorage.removeItem("deptToken"); // in case of dept login
-      await AsyncStorage.removeItem("dept"); // in case of dept login
-      set({ token: null, user: null });
+      await AsyncStorage.removeItem("civic-auth-token");
+      set({ token: null, user: null, role: null });
     } catch (e) {
       console.error("Logout error:", e);
     }

@@ -1,19 +1,28 @@
 import { View, Text, Pressable } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import MyReports_dash from "../../Components/MyReports_dash";
 import Allissues_dash from "../../Components/Allissues_dash";
 import { ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const Home = () => {
+    const router = useRouter();
+  const { user, token } = useAuthStore();
   const [isHovered, setIsHovered] = React.useState(false);
-   const router = useRouter();
-  const onPress = () => {
+ 
+  
+useEffect(() => {
+   if(user?.role !== "citizen" || !token) {
+    // 🚫 Wrong role → kick to normal home
+    router.replace("/");
+  }
+}, [user, token]);
+const onPress = () => {
     router.push("/AddPost");
   };
- 
   return (
     <View className="flex-1 bg-white">
       <Pressable
