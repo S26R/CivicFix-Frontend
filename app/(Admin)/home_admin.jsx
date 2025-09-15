@@ -49,7 +49,7 @@ const HomeAdmin = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          "http://localhost:5000/api/authority/dashboard/analytics",
+          `${API_URL}/api/authority/dashboard/analytics`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -119,12 +119,12 @@ const HomeAdmin = () => {
   const byStatus = analytics?.byStatus || {};
 
   const cards = [
-    { title: "Total Reports", value: total, color: "blue", path: "/admin/TotalIssues" },
-    { title: "Raised Reports", value: byStatus["raised"] || 0, color: "yellow", path: "/admin/RaisedIssues" },
-    { title: "In Progress", value: byStatus["in-progress"] || 0, color: "orange", path: "/admin/InProgressIssues" },
-    { title: "Assigned Reports", value: byStatus["assigned"] || 0, color: "purple", path: "/admin/AssignedIssues" },
-    { title: "Resolved Reports", value: byStatus["resolved"] || 0, color: "green", path: "/admin/ResolvedIssues" },
-    { title: "Rejected Reports", value: byStatus["rejected"] || 0, color: "red", path: "/admin/RejectedIssues" },
+    { title: "Total Reports", value: total, color: "blue", path: "/(Admin_dash)/TotalIssues" },
+    { title: "Raised Reports", value: byStatus["raised"] || 0, color: "yellow", path: "/(Admin_dash)/RaisedIssues" },
+    { title: "In Progress", value: byStatus["in-progress"] || 0, color: "orange", path: "/(Admin_dash)/InProgressIssues" },
+    { title: "Assigned Reports", value: byStatus["assigned"] || 0, color: "purple", path: "/(Admin_dash)/AssignedIssues" },
+    { title: "Resolved Reports", value: byStatus["resolved"] || 0, color: "green", path: "/(Admin_dash)/ResolvedIssues" },
+    { title: "Rejected Reports", value: byStatus["rejected"] || 0, color: "red", path: "/(Admin_dash)/RejectedIssues" },
   ];
 
   return (
@@ -141,7 +141,7 @@ const HomeAdmin = () => {
             <TouchableOpacity
               key={index}
               onPress={() => router.push(card.path)}
-              className={`w-[48%] mb-4 bg-${card.color}-100 rounded-2xl border border-${card.color}-200 p-4 shadow-md`}
+              className={`w-[48%] mb-4 bg-${card.color}-100 rounded-2xl p-4 shadow-md`}
             >
               <Text className="text-gray-500 text-sm">{card.title}</Text>
               <AnimatedNumber
@@ -157,7 +157,7 @@ const HomeAdmin = () => {
 
           <View className="flex-row justify-between">
             <TouchableOpacity
-              onPress={() => router.push("/admin/Citizens")}
+              onPress={() => router.push("/(Admin_dash)/Citizens")}
               className="flex-1 mx-1 bg-indigo-100 rounded-2xl border border-indigo-200 p-4 shadow-md"
             >
               <Text className="text-gray-500 text-sm">Active Citizens</Text>
@@ -168,7 +168,7 @@ const HomeAdmin = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.push("/admin/Departments")}
+              onPress={() => router.push("/(Admin_dash)/Departments")}
               className="flex-1 mx-1 bg-pink-100 rounded-2xl border border-pink-200 p-4 shadow-md"
             >
               <Text className="text-gray-500 text-sm">Active Departments</Text>

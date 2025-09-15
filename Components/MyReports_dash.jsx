@@ -7,12 +7,47 @@ import { API_URL } from "@env";
 import StatusBadge from "./StatusBadge.jsx";
 
 const MyReports_dash = ({ router, n = 3, link = false }) => {
- 
   const { token, user } = useAuthStore();
 
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [addresses, setAddresses] = useState({}); // cache by issueId
 
+  // 🔹 Helper: reverse geocode with timeout
+  const fetchAddress = async (lat, lng, issueId) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+        {
+          headers: { "User-Agent": "CivicFix/1.0" },
+          signal: controller.signal,
+        }
+      );
+      clearTimeout(timeout);
+
+      if (!res.ok) throw new Error("Geocode failed");
+      const geoData = await res.json();
+
+      let displayAddress =
+        geoData.address?.road ||
+        geoData.address?.village ||
+        geoData.address?.town ||
+        geoData.address?.city ||
+        geoData.display_name?.split(",")[0] ||
+        "Unknown area";
+
+      setAddresses((prev) => ({ ...prev, [issueId]: displayAddress }));
+    } catch (err) {
+      clearTimeout(timeout);
+      console.log("Geocoding error:", err.message);
+      setAddresses((prev) => ({ ...prev, [issueId]: "Unknown area" }));
+    }
+  };
+
+  // 🔹 Fetch issues (no blocking on geocode)
   useEffect(() => {
     const fetchIssues = async () => {
       try {
@@ -28,8 +63,18 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
         if (!res.ok) throw new Error("Failed to fetch issues");
 
         const data = await res.json();
-        console.log("Fetched issues:", data);
         setIssues(data);
+
+        // Start geocoding individually in background
+        data.forEach((issue) => {
+          if (
+            issue.location?.coordinates?.length === 2 &&
+            !addresses[issue._id]
+          ) {
+            const [lng, lat] = issue.location.coordinates;
+            fetchAddress(lat, lng, issue._id);
+          }
+        });
       } catch (err) {
         console.error("Error fetching my issues:", err);
       } finally {
@@ -50,26 +95,26 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
     );
   }
 
-  
-
   return (
     <View className="rounded-2xl bg-orange-50 shadow-lg border border-orange-200 m-2">
       <View className="bg-white p-4 rounded-lg">
         <Text className="text-2xl font-bold text-orange-600 mb-6">
-          My Reports
+          My Top Reports
         </Text>
 
         {issues.length === 0 ? (
           <Text className="text-gray-500">No reports yet.</Text>
         ) : (
           issues.slice(0, n).map((issue) => {
-          
             const createdAt = new Date(issue.createdAt);
             const formattedDate = createdAt.toLocaleDateString("en-GB", {
               day: "numeric",
               month: "long",
               year: "numeric",
             });
+
+            const displayAddress =
+              addresses[issue._id] || "Loading address…";
 
             return (
               <TouchableOpacity
@@ -99,23 +144,23 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
                         {issue.topic}
                       </Text>
 
-                      <Text className="text-gray-600 mb-2">
+                      <Text className="text-gray-600 mb-2" numberOfLines={2}>
                         {issue.description}
+                      </Text>
+
+                      {/* Nearby address */}
+                      <Text className="text-sm text-gray-700 mb-1">
+                        📍 {displayAddress}
                       </Text>
 
                       <Text className="text-sm text-gray-500 mb-2">
                         {issue.department}
                       </Text>
 
-                      {/* Status Badge */}
-                      <View
-                        
-                      >
-                        <StatusBadge status={issue.status} />
-                      </View>
+                      <StatusBadge status={issue.status} />
                     </View>
 
-                    {/* Right: Image + Date */}
+                    {/* Right: Image */}
                     <View className="items-end">
                       {issue.media && issue.media.length > 0 && (
                         <Image
@@ -124,18 +169,20 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
                           resizeMode="cover"
                         />
                       )}
-                      
                     </View>
                   </View>
 
-                  {/* Upvotes */}
+                  {/* Upvotes + Date */}
                   <View className="flex-row justify-between items-center mt-2">
                     <View className="flex-row items-center">
-
-                    <Ionicons name="arrow-up-circle" size={20} color="#f97316" />
-                    <Text className="ml-2 text-gray-800 font-medium">
-                      {issue.upvotes?.length || 0} Upvotes
-                    </Text>
+                      <Ionicons
+                        name="arrow-up-circle"
+                        size={20}
+                        color="#f97316"
+                      />
+                      <Text className="ml-2 text-gray-800 font-medium">
+                        {issue.upvotes?.length || 0} Upvotes
+                      </Text>
                     </View>
                     <View>
                       <Text className="text-xs text-gray-500">
@@ -143,7 +190,6 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
                       </Text>
                     </View>
                   </View>
-                  
                 </View>
               </TouchableOpacity>
             );

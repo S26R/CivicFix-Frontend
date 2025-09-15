@@ -16,6 +16,7 @@ const Allissues_dash = ({ router, button = true }) => {
 
   const { token, user } = useAuthStore();
 
+  // 📍 get user location
   useEffect(() => {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -30,52 +31,81 @@ const Allissues_dash = ({ router, button = true }) => {
     getLocation();
   }, []);
 
+  // 📍 fetch issues feed
   useEffect(() => {
-  const fetchCitizenFeed = async () => {
-    if (!location || !token || !user) return;
+    const fetchCitizenFeed = async () => {
+      if (!location || !token || !user) return;
 
-    try {
-      setLoading(true);
-      const lat = location.coords.latitude;
-      const lng = location.coords.longitude;
+      try {
+        setLoading(true);
+        const lat = location.coords.latitude;
+        const lng = location.coords.longitude;
 
-      const REVERSE_GEOCODING_API_URL = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_API_KEY}`;
-      const geoResponse = await fetch(REVERSE_GEOCODING_API_URL);
-      const geoData = await geoResponse.json();
+        const REVERSE_GEOCODING_API_URL = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_API_KEY}`;
+        const geoResponse = await fetch(REVERSE_GEOCODING_API_URL);
+        const geoData = await geoResponse.json();
 
-      let context = "rural";
-      const isUrban = geoData.features.some((feature) =>
-        feature.place_type.includes("place") || feature.place_type.includes("locality")
-      );
-      if (isUrban) context = "urban";
+        let context = "rural";
+        const isUrban = geoData.features.some((feature) =>
+          feature.place_type.includes("place") || feature.place_type.includes("locality")
+        );
+        if (isUrban) context = "urban";
 
-      const url = `${API_URL}/api/issues/feed/citizen?lat=${lat}&lng=${lng}&context=${context}`;
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        const url = `${API_URL}/api/issues/feed/citizen?lat=${lat}&lng=${lng}&context=${context}`;
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-      if (!res.ok) throw new Error("Failed to fetch citizen feed");
+        if (!res.ok) throw new Error("Failed to fetch citizen feed");
 
-      const data = await res.json();
+        const data = await res.json();
 
-      // 🔹 Always recalc hasUpvoted from server’s upvotes array
-      const issuesWithVoteStatus = data.issues.map((issue) => ({
-        ...issue,
-        hasUpvoted: issue.upvotes.includes(user.id),
-      }));
+        // 🔹 Add hasUpvoted + placeholder for address
+        const issuesWithExtras = data.issues.map((issue) => ({
+          ...issue,
+          hasUpvoted: issue.upvotes.includes(user.id),
+          address: null,
+        }));
 
-      setIssues(issuesWithVoteStatus);
-    } catch (err) {
-      console.error("Error fetching citizen feed:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setIssues(issuesWithExtras);
 
-  fetchCitizenFeed();
-}, [location, token, user]);
+        // 🔹 Reverse geocode each issue’s coords
+        issuesWithExtras.forEach(async (issue) => {
+          if (!issue?.location?.coordinates) return;
+          try {
+            const [lng, lat] = issue.location.coordinates;
+            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?types=place,locality,neighborhood,address&access_token=${MAPBOX_API_KEY}`;
+            const res = await fetch(url);
+            const geo = await res.json();
+            if (geo.features && geo.features.length > 0) {
+              const place =
+                geo.features.find((f) =>
+                  ["neighborhood", "locality", "place", "address"].some((t) =>
+                    f.place_type.includes(t)
+                  )
+                ) || geo.features[0];
 
+              setIssues((prev) =>
+                prev.map((i) =>
+                  i._id === issue._id ? { ...i, address: place.text } : i
+                )
+              );
+            }
+          } catch (err) {
+            console.error("Error reverse geocoding issue:", err);
+          }
+        });
+      } catch (err) {
+        console.error("Error fetching citizen feed:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchCitizenFeed();
+  }, [location, token, user]);
+
+  // 📍 voting handler
   const handleVote = async (issueId) => {
     setVotingIssueId(issueId);
 
@@ -101,16 +131,15 @@ const Allissues_dash = ({ router, button = true }) => {
 
       if (res.ok) {
         setIssues((prevIssues) =>
-          prevIssues.map((issue) => {
-            if (issue._id === issueId) {
-              return {
-                ...issue,
-                upvotes: data.count, // backend should return the updated count
-                hasUpvoted: !issue.hasUpvoted,
-              };
-            }
-            return issue;
-          })
+          prevIssues.map((issue) =>
+            issue._id === issueId
+              ? {
+                  ...issue,
+                  upvotes: data.count,
+                  hasUpvoted: !issue.hasUpvoted,
+                }
+              : issue
+          )
         );
 
         const toastMessage = issueToVote.hasUpvoted ? "Upvote Removed!" : "Upvoted!";
@@ -134,6 +163,7 @@ const Allissues_dash = ({ router, button = true }) => {
     }
   };
 
+  // 📍 UI
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center p-4">
@@ -162,10 +192,20 @@ const Allissues_dash = ({ router, button = true }) => {
         className="flex-1 p-4 m-2 bg-white rounded-2xl shadow-lg border border-orange-200"
         contentContainerStyle={{ paddingBottom: 50 }}
       >
-        <Text className="text-2xl font-bold text-orange-600 mb-6">Nearby Issues</Text>
-        <Text className="text-gray-600 mb-4 text-xl">
-          AI-Powered Feed. This feed uses a smart algorithm to show you the issues that matter most, based on your location and real-time community upvotes.
+        <Text
+          className="text-center text-lg text-gray-600 mb-6 leading-relaxed"
+          style={{
+            fontFamily: "System",
+            letterSpacing: 0.5,
+          }}
+        >
+          <Text className="text-orange-500 font-bold">⚡ AI-Powered Feed</Text>{" "}
+          delivers the <Text className="font-semibold text-gray-800">most relevant issues</Text>{" "}
+          around you — based on{" "}
+          <Text className="text-orange-400 font-medium">location</Text> and{" "}
+          <Text className="text-orange-500 font-medium">real-time community votes</Text>.
         </Text>
+
         {issues.length === 0 ? (
           <Text className="text-gray-500 text-center mt-4">No nearby issues found.</Text>
         ) : (
@@ -180,7 +220,9 @@ const Allissues_dash = ({ router, button = true }) => {
             return (
               <TouchableOpacity
                 key={issue._id}
-                onPress={() => router.push({ pathname: "/ReportsDetails", params: { id: issue._id } })}
+                onPress={() =>
+                  router.push({ pathname: "/ReportsDetails", params: { id: issue._id } })
+                }
               >
                 <View
                   className="mb-3 rounded-2xl bg-orange-50 p-3 border border-orange-200"
@@ -194,13 +236,24 @@ const Allissues_dash = ({ router, button = true }) => {
                 >
                   <View className="flex-row justify-between items-start">
                     <View className="flex-1 pr-3">
-                      <Text className="text-lg font-semibold text-gray-900 mb-1">{issue.topic}</Text>
+                      <Text className="text-lg font-semibold text-gray-900 mb-1">
+                        {issue.topic}
+                      </Text>
                       <Text className="text-gray-600 mb-2">{issue.description}</Text>
+
+                      {/* 🆕 Nearby Address */}
+                      {issue.address && (
+                        <Text className="text-sm text-gray-700 italic mb-2">
+                          📍 {issue.address}
+                        </Text>
+                      )}
+
                       <Text className="text-sm text-gray-500 mb-2">{issue.department}</Text>
                       <View>
                         <StatusBadge status={issue.status} />
                       </View>
                     </View>
+
                     <View className="items-end">
                       {issue.media && issue.media.length > 0 && (
                         <Image
@@ -211,6 +264,7 @@ const Allissues_dash = ({ router, button = true }) => {
                       )}
                     </View>
                   </View>
+
                   <View className="flex-row justify-between items-center mt-2">
                     <View className="flex-row items-center">
                       <Ionicons name="arrow-up-circle" size={20} color="#f97316" />
@@ -236,6 +290,7 @@ const Allissues_dash = ({ router, button = true }) => {
                         </TouchableOpacity>
                       )}
                     </View>
+
                     <View>
                       <Text className="text-xs text-gray-500">{formattedDate}</Text>
                     </View>

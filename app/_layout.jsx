@@ -42,6 +42,7 @@ export default function RootLayout() {
         <Stack.Screen name="(Reports)" options={{ headerShown: false }} />
         <Stack.Screen name="(Admin)" options={{ headerShown: false }} />
         <Stack.Screen name="(Department)" options={{ headerShown: false }} />
+        <Stack.Screen name="(Admin_dash)" options={{ headerShown: false }} />
       </Stack>
 
       {/* 👇 Toast MUST be outside the Stack */}

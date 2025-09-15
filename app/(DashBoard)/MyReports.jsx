@@ -13,7 +13,7 @@ const MyReports = () => {
             contentContainerStyle={{ paddingBottom: 20 }}
             showsVerticalScrollIndicator={false}
           >
-            <MyReports_dash router={router} n={8} link={true}/>
+            <MyReports_dash router={router} n={100} link={true}/>
             
           </ScrollView>
   )

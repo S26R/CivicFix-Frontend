@@ -1,21 +1,79 @@
-import React from "react";
-import { View } from "react-native";
-import Map, { Marker } from "react-map-gl/mapbox";
+import React, { useRef, useEffect } from "react";
+import { View, Animated, Easing, Platform } from "react-native";
+import Map, { Marker as WebMarker } from "react-map-gl/mapbox";
+import MapboxGL from "@rnmapbox/maps";
 import { MAPBOX_API_KEY } from "@env";
-import MapboxGL from "@rnmapbox/maps"; 
-import { Platform } from "react-native";
 
 if (Platform.OS !== "web") {
   MapboxGL = require("@rnmapbox/maps").default;
   MapboxGL.setAccessToken(MAPBOX_API_KEY);
 }
 
+const defaultCenter = { latitude: 13.02, longitude: 78.61 };
+
+// 🎯 Animated dancing pin
+const DancingPin = ({ color = "#f97316", size = 24 }) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 1.2,
+          duration: 600,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 600,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
+
+  return (
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <View style={{ alignItems: "center" }}>
+        {/* Circle */}
+        <View
+          style={{
+            width: size / 2,
+            height: size / 2,
+            backgroundColor: color,
+            borderRadius: size / 4,
+            borderWidth: 1,
+            borderColor: "white",
+            zIndex: 2,
+          }}
+        />
+        {/* Triangle */}
+        <View
+          style={{
+            width: 0,
+            height: 0,
+            borderLeftWidth: size / 4,
+            borderRightWidth: size / 4,
+            borderTopWidth: size / 2,
+            borderLeftColor: "transparent",
+            borderRightColor: "transparent",
+            borderTopColor: color,
+            marginTop: -1,
+          }}
+        />
+      </View>
+    </Animated.View>
+  );
+};
+
 export default function HotspotsMap({ hotspots }) {
-  const defaultCenter = { latitude: 13.02, longitude: 78.61 };
   const center = hotspots.length
     ? { latitude: hotspots[0].lat, longitude: hotspots[0].lng }
     : defaultCenter;
 
+  // 🔥 Dynamic pin color
   const getColor = (count) =>
     count > 4 ? "red" : count > 2 ? "orange" : "green";
 
@@ -33,22 +91,9 @@ export default function HotspotsMap({ hotspots }) {
           mapStyle="mapbox://styles/mapbox/streets-v11"
         >
           {hotspots.map((h, idx) => (
-            <Marker
-              key={idx}
-              longitude={h.lng}
-              latitude={h.lat}
-            >
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  backgroundColor: getColor(h.count),
-                  borderRadius: 10,
-                  borderWidth: 2,
-                  borderColor: "white",
-                }}
-              />
-            </Marker>
+            <WebMarker key={idx} longitude={h.lng} latitude={h.lat}>
+              <DancingPin color={getColor(h.count)} size={28} />
+            </WebMarker>
           ))}
         </Map>
       ) : (
@@ -64,16 +109,7 @@ export default function HotspotsMap({ hotspots }) {
                 id={`hotspot-${i}`}
                 coordinate={[h.lng, h.lat]}
               >
-                <View
-                  style={{
-                    height: 20,
-                    width: 20,
-                    backgroundColor: getColor(h.count),
-                    borderRadius: 10,
-                    borderWidth: 2,
-                    borderColor: "white",
-                  }}
-                />
+                <DancingPin color={getColor(h.count)} size={28} />
               </MapboxGL.PointAnnotation>
             ))}
           </MapboxGL.MapView>

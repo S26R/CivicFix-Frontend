@@ -97,8 +97,11 @@ const Home = () => {
 
         {/* Footer */}
         <View className="items-center pb-8">
-          <Text className="text-gray-400 text-xs text-center">
+          <Text className="text-gray-400 text-xs text-center mb-1">
             Making cities better, one report at a time
+          </Text>
+          <Text className="text-gray-400 text-xs text-center">
+            An Initiative By DevVikings Team 😊
           </Text>
           <Text className="text-gray-400 text-xs text-center mt-1">
             Version 1.0 • CivicFix Platform

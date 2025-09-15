@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useAuthStore } from "../../store/useAuthStore";
+import Toast from "react-native-toast-message";
 
 const DepartmentHome = () => {
   
@@ -24,6 +25,7 @@ const DepartmentHome = () => {
 
    const handleLogout = async () => {
     await logout();
+    Toast.show({type:"success",text1:"LoggedOut Successfully "})
     router.replace("/");
   };
 

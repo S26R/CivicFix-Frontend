@@ -5,6 +5,7 @@ import { useAuthStore } from "../../store/useAuthStore.js";
 import { API_URL } from "@env";
 import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
 
 export default function Profile() {
   const { token, user, logout } = useAuthStore();
@@ -46,6 +47,7 @@ export default function Profile() {
   // Logout handler
   const handleLogout = async () => {
     await logout();
+    Toast.show({type:"success",text1:"Sayonara 🥺",text2:"Thanks for contributing to make the community better 🙌"})
     router.replace("/");
   };
 
