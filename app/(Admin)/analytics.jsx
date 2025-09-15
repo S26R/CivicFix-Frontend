@@ -62,7 +62,7 @@ export default function AnalyticsDemo() {
   return (
     <ScrollView style={{ flex: 1, padding: 16, backgroundColor: "white" }}>
       <Text style={{ fontSize: 22, fontWeight: "700", marginBottom: 12, color: "#f97316" }}>
-        Analytics Demo
+        Analytics Data and Hotspots
       </Text>
 
       {/* Total Issues */}

@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import StatusBadge from "./StatusBadge";
+import { MAPBOX_API_KEY } from "@env";
 
 const IssueCard = ({ issue, onPress }) => {
   const createdAt = new Date(issue.createdAt);
@@ -10,6 +11,38 @@ const IssueCard = ({ issue, onPress }) => {
     month: "long",
     year: "numeric",
   });
+
+  const [address, setAddress] = useState(null);
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      if (!issue?.location?.coordinates) return; // expect [lng, lat]
+
+      try {
+        const [lng, lat] = issue.location.coordinates;
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?types=place,locality,neighborhood,address&access_token=${MAPBOX_API_KEY}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.features && data.features.length > 0) {
+          // Pick the most human-friendly short label
+          const place =
+            data.features.find((f) =>
+              ["neighborhood", "locality", "place", "address"].some((t) =>
+                f.place_type.includes(t)
+              )
+            ) || data.features[0];
+
+          setAddress(place.text);
+        }
+      } catch (err) {
+        console.error("Reverse geocoding error:", err);
+      }
+    };
+
+    fetchAddress();
+  }, [issue?.location?.coordinates]);
 
   return (
     <TouchableOpacity
@@ -33,6 +66,13 @@ const IssueCard = ({ issue, onPress }) => {
           <Text className="text-gray-600 mb-2" numberOfLines={2}>
             {issue.description}
           </Text>
+
+          {/* 🆕 Nearby address */}
+          {address && (
+            <Text className="text-sm text-gray-700 italic mb-2">
+              📍 {address}
+            </Text>
+          )}
 
           <Text className="text-sm text-gray-500 mb-2">
             {issue.department}
@@ -71,4 +111,3 @@ const IssueCard = ({ issue, onPress }) => {
 };
 
 export default IssueCard;
-

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import { API_URL } from "@env";
 import { useAuthStore } from "../store/useAuthStore";
+import Toast from "react-native-toast-message";
 
 
 const AuthorityLogin = () => {
@@ -28,7 +29,7 @@ const AuthorityLogin = () => {
         data = JSON.parse(text);
       } catch {
         console.log("Non-JSON response:", text);
-        Alert.alert("Error", "Server returned an unexpected response");
+       Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
         return;
       }
 
@@ -36,14 +37,14 @@ const AuthorityLogin = () => {
         // Save token in Zustand store (this will decode and store role automatically)
         await login(data.token);
 
-        Alert.alert("Success", "Logged in successfully!");
+       Toast.show({type:"success",text1:"Welcome Sir 😁",text2:"Have a Nice Day !!"})
         router.replace("/home_admin"); // Replace so user can't go back
       } else {
-        Alert.alert("Error", data.message || "Invalid credentials");
+       Toast.show({type:"error",text1:"Sorry 🥺",text2:"Invalid Credentials"})
       }
     } catch (error) {
       console.error("Login error:", error);
-      Alert.alert("Error", "Unable to connect to server");
+     Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
     } finally {
       setLoading(false);
     }

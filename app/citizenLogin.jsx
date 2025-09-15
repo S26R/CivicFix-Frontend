@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env"; // Correct way to import backend URL from .env
 import { useAuthStore } from "../store/useAuthStore";
+import Toast from "react-native-toast-message";
 
 const citizenLogin = () => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const citizenLogin = () => {
         data = JSON.parse(text); // parse JSON safely
       } catch {
         console.log("Non-JSON response:", text);
-        Alert.alert("Error", "Server returned an unexpected response");
+        Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
         return;
       }
 
@@ -43,14 +44,14 @@ const citizenLogin = () => {
           await login(data.token) // you can see it in console
         }
 
-        Alert.alert("Success", "Logged in successfully!");
+        Toast.show({type:"success", text1:"Logged in successfully!",text2:"Welcome 😘"});
         router.push('/Home'); // Navigate to Home screen
       } else {
-        Alert.alert("Error", data.message || "Invalid credentials");
+       Toast.show({type:"error",text1:"Sorry 🥺",text2:"Invalid Credentials"})
       }
     } catch (error) {
       console.error("Login error:", error);
-      Alert.alert("Error", "Unable to connect to server");
+     Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
     } finally {
       setLoading(false);
     }
