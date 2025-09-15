@@ -6,6 +6,7 @@ import { API_URL } from "@env";
 import { useAuthStore } from "../../store/useAuthStore.js"; // adjust path
 import { useRouter } from "expo-router";
 import StatusBadge from "../../Components/StatusBadge.jsx";
+import { ScrollView } from "react-native-web";
 
 
 export default function DepartmentHome(link = true) {
@@ -51,10 +52,10 @@ export default function DepartmentHome(link = true) {
       );
     }
   return (
-    <View className="rounded-2xl bg-orange-50 shadow-lg border border-orange-200 m-2">
+    <ScrollView className="rounded-2xl bg-orange-50 shadow-lg border border-orange-200 m-2">
     <View className="bg-white p-4 rounded-lg">
       <Text className="text-2xl font-bold text-orange-600 mb-6">
-        Department Issues(department er name)
+        Welcome to Department Dashboard
       </Text>
 
       {issues.length === 0 ? (
@@ -148,6 +149,6 @@ export default function DepartmentHome(link = true) {
         })
       )}
     </View>
-  </View>
+  </ScrollView>
   )
 }

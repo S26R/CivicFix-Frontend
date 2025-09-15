@@ -33,6 +33,13 @@
         {
           "photosPermission": "The app accesses your photos to register your issue."
         }
+      ],
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsImpl": "mapbox",
+          "RNMapboxMapsDownloadToken": "pk.eyJ1IjoiY3ZpY2ZpeCIsImEiOiJjbWZjdTk0NmowMjIyMm5vbXRvbWUzZ2R1In0.vpZtlXkzVOI46ggMZe46aA"
+        }
       ]
 
     ],

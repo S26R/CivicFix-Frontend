@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useAuthStore } from "../../store/useAuthStore";
 
 const DepartmentHome = () => {
+  
   const router = useRouter();
   const [dept, setDept] = useState("");
   const { logout } = useAuthStore();

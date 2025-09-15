@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env"; // Correct way to import backend URL from .env
+import { useAuthStore } from "../store/useAuthStore";
 
 const citizenLogin = () => {
   const router = useRouter();
+  const { login } = useAuthStore(); // Access login function from the store
   const [loading, setLoading] = useState(false); // Optional: Loading state
   const [loginData, setLoginData] = useState({
     identifier: "",
@@ -38,8 +40,7 @@ const citizenLogin = () => {
       if (response.ok) {
         // Save token to AsyncStorage
         if (data.token) {
-          await AsyncStorage.setItem("token", data.token);
-          console.log("Token saved:", data.token); // you can see it in console
+          await login(data.token) // you can see it in console
         }
 
         Alert.alert("Success", "Logged in successfully!");

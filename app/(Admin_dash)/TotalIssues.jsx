@@ -41,7 +41,7 @@ const TotalIssues = () => {
   }
 
   return (
-    <View className="flex-1 bg-white p-4">
+    <View className="flex-1 bg-white p-4" >
       <Text className="text-2xl font-bold text-orange-600 mb-4">All Issues</Text>
 
       <FlatList
