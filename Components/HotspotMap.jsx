@@ -1,8 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import { View, Animated, Easing, Platform } from "react-native";
 import Map, { Marker as WebMarker } from "react-map-gl/mapbox";
-import MapboxGL from "@rnmapbox/maps";
 import { MAPBOX_API_KEY } from "@env";
+
+// no react-native-svg import since it's unused
+
+let MapboxGL; // declare but don’t import at top
 
 if (Platform.OS !== "web") {
   MapboxGL = require("@rnmapbox/maps").default;
@@ -11,10 +14,8 @@ if (Platform.OS !== "web") {
 
 const defaultCenter = { latitude: 13.02, longitude: 78.61 };
 
-// 🎯 Animated dancing pin
 const DancingPin = ({ color = "#f97316", size = 24 }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
-
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -37,7 +38,6 @@ const DancingPin = ({ color = "#f97316", size = 24 }) => {
   return (
     <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
       <View style={{ alignItems: "center" }}>
-        {/* Circle */}
         <View
           style={{
             width: size / 2,
@@ -49,7 +49,6 @@ const DancingPin = ({ color = "#f97316", size = 24 }) => {
             zIndex: 2,
           }}
         />
-        {/* Triangle */}
         <View
           style={{
             width: 0,
@@ -73,7 +72,6 @@ export default function HotspotsMap({ hotspots }) {
     ? { latitude: hotspots[0].lat, longitude: hotspots[0].lng }
     : defaultCenter;
 
-  // 🔥 Dynamic pin color
   const getColor = (count) =>
     count > 4 ? "red" : count > 2 ? "orange" : "green";
 

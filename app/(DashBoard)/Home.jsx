@@ -36,7 +36,7 @@ const onPress = () => {
         <Text className="text-white font-semibold text-lg">Report Issue  </Text>
 
         <Ionicons
-          name="add-circle"
+          name="add-Circle"
           size={22}
           color="#fff"
           style={{ marginRight: 8 }}

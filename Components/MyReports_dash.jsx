@@ -176,7 +176,7 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
                   <View className="flex-row justify-between items-center mt-2">
                     <View className="flex-row items-center">
                       <Ionicons
-                        name="arrow-up-circle"
+                        name="arrow-up-Circle"
                         size={20}
                         color="#f97316"
                       />

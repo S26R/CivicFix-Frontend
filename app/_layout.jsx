@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import "../global.css";
 import Toast from "react-native-toast-message";
 import { useAuthStore } from "../store/useAuthStore";
-import { ActivityIndicator, View } from "react-native-web";
+import { ActivityIndicator, View } from "react-native";
 import { useEffect } from "react";
 
 export default function RootLayout() {
