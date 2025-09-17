@@ -99,7 +99,7 @@ const citizenLogin = () => {
           placeholder="Enter password"
           value={loginData.password}
           onChangeText={(val) => handleChange("password", val)}
-          secureTextEntry
+         
           className="border border-orange-300 rounded-xl px-4 py-3 mb-6 text-base text-black"
           placeholderTextColor="#fb923c"
         />
