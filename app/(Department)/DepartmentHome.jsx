@@ -6,7 +6,7 @@ import { API_URL } from "@env";
 import { useAuthStore } from "../../store/useAuthStore.js"; // adjust path
 import { useRouter } from "expo-router";
 import StatusBadge from "../../Components/StatusBadge.jsx";
-import { ScrollView } from "react-native-web";
+import { ScrollView } from "react-native";
 
 
 export default function DepartmentHome(link = true) {

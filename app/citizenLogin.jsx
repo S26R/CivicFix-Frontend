@@ -37,6 +37,7 @@ const citizenLogin = () => {
         Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
         return;
       }
+      //response=JSON.parse(response)
 
       if (response.ok) {
         // Save token to AsyncStorage
@@ -98,7 +99,7 @@ const citizenLogin = () => {
           placeholder="Enter password"
           value={loginData.password}
           onChangeText={(val) => handleChange("password", val)}
-          secureTextEntry
+         
           className="border border-orange-300 rounded-xl px-4 py-3 mb-6 text-base text-black"
           placeholderTextColor="#fb923c"
         />

@@ -9,7 +9,7 @@ import Toast from "react-native-toast-message";
 
 const Allissues_dash = ({ router, button = true }) => {
   const [issues, setIssues] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState(null);
   const [locationErrorMsg, setLocationErrorMsg] = useState(null);
   const [votingIssueId, setVotingIssueId] = useState(null); // track which issue is being voted
@@ -26,6 +26,7 @@ const Allissues_dash = ({ router, button = true }) => {
         return;
       }
       let currentLocation = await Location.getCurrentPositionAsync({});
+      
       setLocation(currentLocation);
     };
     getLocation();
@@ -40,26 +41,34 @@ const Allissues_dash = ({ router, button = true }) => {
         setLoading(true);
         const lat = location.coords.latitude;
         const lng = location.coords.longitude;
+        console.log("Lattitude",lat);
+        console.log("Longitude",lng);
 
         const REVERSE_GEOCODING_API_URL = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_API_KEY}`;
+
+
         const geoResponse = await fetch(REVERSE_GEOCODING_API_URL);
         const geoData = await geoResponse.json();
+        
 
         let context = "rural";
         const isUrban = geoData.features.some((feature) =>
           feature.place_type.includes("place") || feature.place_type.includes("locality")
         );
+        
         if (isUrban) context = "urban";
-
+           
         const url = `${API_URL}/api/issues/feed/citizen?lat=${lat}&lng=${lng}&context=${context}`;
+        console.log(url)
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        
 
         if (!res.ok) throw new Error("Failed to fetch citizen feed");
 
         const data = await res.json();
-
+        
         // 🔹 Add hasUpvoted + placeholder for address
         const issuesWithExtras = data.issues.map((issue) => ({
           ...issue,

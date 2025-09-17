@@ -128,7 +128,7 @@ const AddPost = () => {
         setModalVisible(true);
         return;
       }
-
+      //response=JSON.parse(response);
       if (response.ok) {
         Toast.show({ type: "success", text1: "Wohoo Report Created", text2: "Your voice makes a difference 💡" });
         router.push("/(DashBoard)/Home");
