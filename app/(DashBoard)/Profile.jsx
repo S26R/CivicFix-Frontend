@@ -27,7 +27,7 @@ export default function Profile() {
         });
 
         const data = await res.json();
-
+       //res=JSON.parse(res);
         if (res.ok) {
           setProfile(data);
           console.log("Profile data:", data);
