@@ -133,7 +133,7 @@ export default function DepartmentHome(link = true) {
                 <View className="flex-row justify-between items-center mt-2">
                   <View className="flex-row items-center">
 
-                  <Ionicons name="arrow-up-Circle" size={20} color="#f97316" />
+                  <Ionicons name="arrow-up-circle" size={20} color="#f97316" />
                   <Text className="ml-2 text-gray-800 font-medium">
                     {issue.upvotes?.length || 0} Upvotes
                   </Text>

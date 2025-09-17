@@ -146,16 +146,7 @@ export default function AnalyticsDemo() {
 ) : (
   <Text style={{ color: "#666" }}>No reporters</Text>
 )}
-{/* Hotspots */}
-<Text style={{ marginTop: 12, marginBottom: 6, fontWeight: "600" }}>
-  Top hotspots
-</Text>
 
-{data.hotspots && data.hotspots.length ? (
-  <HotspotsMap hotspots={data.hotspots} />
-) : (
-  <Text style={{ color: "#666" }}>No hotspots</Text>
-)}
 
 
 

@@ -37,6 +37,7 @@ const citizenLogin = () => {
         Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
         return;
       }
+      //response=JSON.parse(response)
 
       if (response.ok) {
         // Save token to AsyncStorage

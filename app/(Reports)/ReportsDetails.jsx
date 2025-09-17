@@ -72,6 +72,7 @@ const ReportDetails = () => {
           body: JSON.stringify({ status: newStatus }),
         }
       );
+      res=JSON.parse(res);
 
       if (!res.ok) throw new Error("Failed to update status");
       Toast.show({
@@ -201,12 +202,7 @@ const ReportDetails = () => {
 
         {/* Location */}
        {/* Location Placeholder */}
-<View className="w-full h-40 bg-orange-100 rounded-xl mb-4 justify-center items-center border border-orange-200">
-  <IssueMap
-  latitude={issue.location?.coordinates[1]}
-  longitude={issue.location?.coordinates[0]}
-/>
-</View>
+
 
 
         {/* Status Section */}
