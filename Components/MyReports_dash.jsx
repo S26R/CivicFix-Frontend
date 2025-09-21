@@ -47,28 +47,6 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
       setAddresses((prev) => ({ ...prev, [issueId]: "Unknown area" }));
     }
   };
-  // useEffect(()=>{
-  //  const fetchIssues = async () => {
-  //     try {
-  //       setLoading(true);
-  //       if (!user?.id) return;
-
-  //       const res = await fetch(`${API_URL}/api/issues/user/${user.id}`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       //res=JSON.parse(res);
-
-  //       if (!res.ok) throw new Error("Failed to fetch issues");
-
-  //       const data = await res.json();
-  //       console.log(data)
-  //     }
-
-  // },[token,user])
-
-
   useEffect(() => {
     const fetchIssues = async () => {
       try {

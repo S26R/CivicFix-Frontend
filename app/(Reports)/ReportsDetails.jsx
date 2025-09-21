@@ -128,8 +128,8 @@ const ReportDetails = () => {
   return (
     <ScrollView className="flex-1 bg-white">
       {/* Media Holder */}
-{issue.media && issue.media.length > 0 ? (
-  <View
+      {issue.media && issue.media.length > 0 ? (
+     <View
     
     className="mb-4 ml-16 mt-4"
     contentContainerStyle={{
