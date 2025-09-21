@@ -126,7 +126,8 @@ const ReportDetails = () => {
   const progressColor = getProgressColor(status);
    console.log("Issue lat", issue.location?.coordinates[0])
   return (
-    <ScrollView className="flex-1 bg-white">
+    <ScrollView
+     className="flex-1 bg-white">
       {/* Media Holder */}
       {issue.media && issue.media.length > 0 ? (
      <View
