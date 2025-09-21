@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAuthStore } from "../store/useAuthStore.js"; // adjust path
-import { API_URL } from "@env";
+import Constants from "expo-constants"
 import StatusBadge from "./StatusBadge.jsx";
 
 const MyReports_dash = ({ router, n = 3, link = false }) => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const { token, user } = useAuthStore();
 
   const [issues, setIssues] = useState([]);

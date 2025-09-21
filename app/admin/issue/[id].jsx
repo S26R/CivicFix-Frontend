@@ -1,11 +1,12 @@
 import { View, Text, ScrollView, Image, TextInput, TouchableOpacity, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
-import { API_URL } from "@env";
+import Constants from "expo-constants"
 import { useAuthStore } from "../../../store/useAuthStore";
  import Toast from "react-native-toast-message";
  import { useRouter } from "expo-router";
 const IssueDetails = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
     const router = useRouter();
   const { id } = useLocalSearchParams();
   const { token, user } = useAuthStore(); // Get role from user

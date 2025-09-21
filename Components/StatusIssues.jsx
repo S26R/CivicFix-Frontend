@@ -1,13 +1,14 @@
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { API_URL } from "@env";
+import Constants from "expo-constants"
 
 import { useAuthStore } from "../store/useAuthStore";
 import IssueCard from "./IssueCard";
 
 
 const StatusIssues = ({ status, title }) => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();

@@ -2,11 +2,12 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from "@env"; // Correct way to import backend URL from .env
+import Constants from "expo-constants" // Correct way to import backend URL from .env
 import { useAuthStore } from "../store/useAuthStore";
 import Toast from "react-native-toast-message";
 
 const citizenLogin = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const router = useRouter();
   const { login } = useAuthStore(); // Access login function from the store
   const [loading, setLoading] = useState(false); // Optional: Loading state

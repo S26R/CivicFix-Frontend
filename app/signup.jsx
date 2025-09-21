@@ -9,10 +9,11 @@ import {
 import React, { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
-import { API_URL } from "@env";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // 👈 new
 
+import AsyncStorage from "@react-native-async-storage/async-storage"; // 👈 new
+import Constants from "expo-constants";
 const Signup = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const [formData, setFormData] = useState({
     email: "",
     phone: "",
@@ -28,7 +29,7 @@ const Signup = () => {
   };
 
   const router = useRouter();
-
+  
   const handleSignup = async () => {
     try {
       const response = await fetch(`${API_URL}/api/auth/signup`, {

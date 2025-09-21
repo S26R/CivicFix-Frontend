@@ -10,7 +10,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
-import { API_URL } from "@env";
+import Constants from "expo-constants";
+
 import { useAuthStore } from "../../store/useAuthStore.js";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
@@ -25,6 +26,7 @@ const STATUS_FLOW = [
 ];
 
 const ReportDetails = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const { id } = useLocalSearchParams();
   const { token, user } = useAuthStore();
 
@@ -97,7 +99,7 @@ const ReportDetails = () => {
     if (status === "resolved") return "bg-green-600";
     return "bg-orange-500";
   };
-
+   
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -202,7 +204,12 @@ const ReportDetails = () => {
 
         {/* Location */}
        {/* Location Placeholder */}
-
+{issue.location?.coordinates[0] && (
+  <View className="h-80 mb-6 rounded-xl overflow-hidden">
+    <IssueMap latitude={issue.location?.coordinates[1]}
+  longitude={issue.location?.coordinates[0]} />
+  </View>
+)}
 
 
         {/* Status Section */}
@@ -286,6 +293,7 @@ const ReportDetails = () => {
           </View>
         )}
 
+{/* Issue Location Map */}
 
 {/* Edit / Close Request */}
 <View className="flex-row justify-between mb-8 mt-4">

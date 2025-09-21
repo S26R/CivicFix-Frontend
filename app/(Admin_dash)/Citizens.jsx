@@ -1,9 +1,10 @@
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
-import { API_URL } from "@env";
 
+import Constants from "expo-constants";
 const Citizens = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const { token } = useAuthStore();
   const [citizens, setCitizens] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,7 @@ const Citizens = () => {
     if (!token) return;
 
     const fetchCitizens = async () => {
+      
       try {
         const res = await fetch(`${API_URL}/api/authority/getAllcitizen`, {
           headers: { Authorization: `Bearer ${token}` },
