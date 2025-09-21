@@ -30,7 +30,7 @@ export default function Profile() {
        //res=JSON.parse(res);
         if (res.ok) {
           setProfile(data);
-          console.log("Profile data:", data);
+          //console.log("Profile data:", data);
         } else {
           console.error("Error fetching profile:", data.msg);
         }
