@@ -95,8 +95,8 @@ const IssueDetails = () => {
         throw new Error(errorText || "Failed to assign issue");
       }
 
-      const updatedIssue = await res.json();
-      setIssue(updatedIssue);
+      const responseData = await res.json();
+      setIssue(responseData.issue);
 
       // ✅ Toast instead of Alert
       Toast.show({

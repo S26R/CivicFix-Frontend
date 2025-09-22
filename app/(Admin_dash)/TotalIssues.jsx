@@ -21,7 +21,7 @@ const TotalIssues = () => {
               },
         });
         const data = await res.json();
-        console.log("Fetched issues:", data);
+        //console.log("Fetched issues:", data);
         setIssues(data);
       } catch (err) {
         console.log("Error fetching issues:", err);
