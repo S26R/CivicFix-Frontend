@@ -5,7 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../store/useAuthStore.js"; // adjust path
 import Constants from "expo-constants"
 import StatusBadge from "./StatusBadge.jsx";
-import NearbyIssuesMap from "./NearbyIssuesMap.jsx";
 
 const MyReports_dash = ({ router, n = 3, link = false }) => {
   const API_URL=Constants.expoConfig?.extra?.API_URL;
@@ -97,19 +96,7 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
   }
 
   return (
-    <View>
-      {/* Nearby Issues Map Section */}
-      <View className="rounded-2xl bg-orange-50 shadow-lg border border-orange-200 m-2 mb-4">
-        <View className="bg-white p-4 rounded-lg">
-          <Text className="text-xl font-bold text-orange-600 mb-3">
-            🗺️ Nearby Issues Feed
-          </Text>
-          <NearbyIssuesMap />
-        </View>
-      </View>
-
-      {/* Original My Reports Section */}
-      <View className="rounded-2xl bg-orange-50 shadow-lg border border-orange-200 m-2">
+    <View className="rounded-2xl bg-orange-50 shadow-lg border border-orange-200 m-2">
       <View className="bg-white p-4 rounded-lg">
         <Text className="text-2xl font-bold text-orange-600 mb-6">
           My Top Reports
@@ -209,7 +196,6 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
           })
         )}
       </View>
-    </View>
     </View>
   );
 };
