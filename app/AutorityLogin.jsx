@@ -1,12 +1,13 @@
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import { API_URL } from "@env";
+import Constants from "expo-constants";
 import { useAuthStore } from "../store/useAuthStore";
 import Toast from "react-native-toast-message";
 
 
 const AuthorityLogin = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const router = useRouter();
   const { login } = useAuthStore(); // Use Zustand store
   const [loading, setLoading] = useState(false);
@@ -88,10 +89,11 @@ const AuthorityLogin = () => {
 
         <TouchableOpacity
           onPress={handleLogin}
-          className="bg-orange-500 rounded-xl py-3 mb-4"
+          className={`bg-orange-500 rounded-xl py-3 mb-4 ${loading ? "opacity-70" : ""}`}
           activeOpacity={0.7}
+          disabled={loading}
         >
-          <Text className={`text-white text-center text-lg font-semibold ${loading ? "animate-pulse" : ""}`}>
+          <Text className="text-white text-center text-lg font-semibold">
             {loading ? "Logging in..." : "Login"}
           </Text>
         </TouchableOpacity>

@@ -3,14 +3,15 @@ import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAuthStore } from "../store/useAuthStore.js"; // adjust path
-import { API_URL } from "@env";
+import Constants from "expo-constants"
 import StatusBadge from "./StatusBadge.jsx";
 
 const MyReports_dash = ({ router, n = 3, link = false }) => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const { token, user } = useAuthStore();
 
   const [issues, setIssues] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [addresses, setAddresses] = useState({}); // cache by issueId
 
   // 🔹 Helper: reverse geocode with timeout
@@ -46,8 +47,6 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
       setAddresses((prev) => ({ ...prev, [issueId]: "Unknown area" }));
     }
   };
-
-  // 🔹 Fetch issues (no blocking on geocode)
   useEffect(() => {
     const fetchIssues = async () => {
       try {
@@ -59,6 +58,7 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
             Authorization: `Bearer ${token}`,
           },
         });
+        //res=JSON.parse(res);
 
         if (!res.ok) throw new Error("Failed to fetch issues");
 
@@ -121,7 +121,7 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
                 key={issue._id}
                 onPress={() =>
                   router.push({
-                    pathname: "/ReportsDetails",
+                    pathname: "/(Reports)/ReportsDetails",
                     params: { id: issue._id },
                   })
                 }

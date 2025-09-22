@@ -2,9 +2,11 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import StatusBadge from "./StatusBadge";
-import { MAPBOX_API_KEY } from "@env";
+import Constants from "expo-constants";
 
 const IssueCard = ({ issue, onPress }) => {
+  const GOOGLE_MAPS_API_KEY =
+    Constants.expoConfig?.extra?.GOOGLE_MAPS_API_KEY; // ✅ use Google key
   const createdAt = new Date(issue.createdAt);
   const formattedDate = createdAt.toLocaleDateString("en-GB", {
     day: "numeric",
@@ -20,21 +22,15 @@ const IssueCard = ({ issue, onPress }) => {
 
       try {
         const [lng, lat] = issue.location.coordinates;
-        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?types=place,locality,neighborhood,address&access_token=${MAPBOX_API_KEY}`;
 
+        // ✅ Google reverse geocoding API
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`;
         const res = await fetch(url);
         const data = await res.json();
 
-        if (data.features && data.features.length > 0) {
-          // Pick the most human-friendly short label
-          const place =
-            data.features.find((f) =>
-              ["neighborhood", "locality", "place", "address"].some((t) =>
-                f.place_type.includes(t)
-              )
-            ) || data.features[0];
-
-          setAddress(place.text);
+        if (data.results && data.results.length > 0) {
+          // Use the most readable address (short form)
+          setAddress(data.results[0].formatted_address);
         }
       } catch (err) {
         console.error("Reverse geocoding error:", err);
@@ -69,9 +65,7 @@ const IssueCard = ({ issue, onPress }) => {
 
           {/* 🆕 Nearby address */}
           {address && (
-            <Text className="text-sm text-gray-700 italic mb-2">
-              📍 {address}
-            </Text>
+            <Text className="text-sm text-gray-700 italic mb-2">📍 {address}</Text>
           )}
 
           <Text className="text-sm text-gray-500 mb-2">

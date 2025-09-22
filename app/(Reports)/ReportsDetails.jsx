@@ -10,7 +10,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
-import { API_URL } from "@env";
+import Constants from "expo-constants";
+
 import { useAuthStore } from "../../store/useAuthStore.js";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
@@ -25,6 +26,7 @@ const STATUS_FLOW = [
 ];
 
 const ReportDetails = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const { id } = useLocalSearchParams();
   const { token, user } = useAuthStore();
 
@@ -72,6 +74,7 @@ const ReportDetails = () => {
           body: JSON.stringify({ status: newStatus }),
         }
       );
+      res=JSON.parse(res);
 
       if (!res.ok) throw new Error("Failed to update status");
       Toast.show({
@@ -96,7 +99,7 @@ const ReportDetails = () => {
     if (status === "resolved") return "bg-green-600";
     return "bg-orange-500";
   };
-
+   
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -123,10 +126,11 @@ const ReportDetails = () => {
   const progressColor = getProgressColor(status);
    console.log("Issue lat", issue.location?.coordinates[0])
   return (
-    <ScrollView className="flex-1 bg-white">
+    <ScrollView
+     className="flex-1 bg-white">
       {/* Media Holder */}
-{issue.media && issue.media.length > 0 ? (
-  <View
+      {issue.media && issue.media.length > 0 ? (
+     <View
     
     className="mb-4 ml-16 mt-4"
     contentContainerStyle={{
@@ -201,12 +205,12 @@ const ReportDetails = () => {
 
         {/* Location */}
        {/* Location Placeholder */}
-<View className="w-full h-40 bg-orange-100 rounded-xl mb-4 justify-center items-center border border-orange-200">
-  <IssueMap
-  latitude={issue.location?.coordinates[1]}
-  longitude={issue.location?.coordinates[0]}
-/>
-</View>
+{issue.location?.coordinates[0] && (
+  <View className="h-80 mb-6 rounded-xl overflow-hidden">
+    <IssueMap latitude={issue.location?.coordinates[1]}
+  longitude={issue.location?.coordinates[0]} />
+  </View>
+)}
 
 
         {/* Status Section */}
@@ -290,6 +294,7 @@ const ReportDetails = () => {
           </View>
         )}
 
+{/* Issue Location Map */}
 
 {/* Edit / Close Request */}
 <View className="flex-row justify-between mb-8 mt-4">

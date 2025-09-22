@@ -1,18 +1,11 @@
-import React, { useEffect, useRef } from "react";
-import { View, Platform, Animated, Easing } from "react-native";
-import MapboxGL from "@rnmapbox/maps";
-import Map, { Marker as WebMarker } from "react-map-gl/mapbox";
-import { MAPBOX_API_KEY } from "@env";
+import React, { useRef, useEffect } from "react";
+import { View, Animated, Easing, StyleSheet, Platform } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 
-// Mobile Mapbox token
-if (Platform.OS !== "web") {
-  MapboxGL = require("@rnmapbox/maps").default;
-  MapboxGL.setAccessToken(MAPBOX_API_KEY);
-}
-
+// Default coordinates if none provided
 const defaultCenter = { latitude: 13.02, longitude: 78.61 };
 
-// Modern bouncing map pin
+// Animated bouncing pin
 const MapPin = ({ color = "#f97316", size = 28 }) => {
   const bounceAnim = useRef(new Animated.Value(0)).current;
 
@@ -35,137 +28,82 @@ const MapPin = ({ color = "#f97316", size = 28 }) => {
     ).start();
   }, []);
 
-  if (Platform.OS !== "web") {
-    return (
-      <Animated.View style={{ transform: [{ translateY: bounceAnim }], alignItems: "center" }}>
-        <View
-          style={{
-            width: size / 2,
-            height: size / 2,
-            backgroundColor: color,
-            borderRadius: size / 4,
-            borderWidth: 1,
-            borderColor: "white",
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 3,
-            zIndex: 2,
-          }}
-        />
-        <View
-          style={{
-            width: 0,
-            height: 0,
-            borderLeftWidth: size / 4,
-            borderRightWidth: size / 4,
-            borderTopWidth: size / 2,
-            borderLeftColor: "transparent",
-            borderRightColor: "transparent",
-            borderTopColor: color,
-            marginTop: -1,
-          }}
-        />
-      </Animated.View>
-    );
-  }
-
-  // Web version
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", animation: "bounce 1s infinite alternate" }}>
-      <div
+    <Animated.View
+      style={{ transform: [{ translateY: bounceAnim }], alignItems: "center" }}
+    >
+      <View
         style={{
           width: size / 2,
           height: size / 2,
           backgroundColor: color,
-          borderRadius: "50%",
-          border: "2px solid white",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+          borderRadius: size / 4,
+          borderWidth: 1,
+          borderColor: "white",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.3,
+          shadowRadius: 3,
           zIndex: 2,
         }}
       />
-      <div
+      <View
         style={{
           width: 0,
           height: 0,
-          borderLeft: `${size / 4}px solid transparent`,
-          borderRight: `${size / 4}px solid transparent`,
-          borderTop: `${size / 2}px solid ${color}`,
+          borderLeftWidth: size / 4,
+          borderRightWidth: size / 4,
+          borderTopWidth: size / 2,
+          borderLeftColor: "transparent",
+          borderRightColor: "transparent",
+          borderTopColor: color,
           marginTop: -1,
         }}
       />
-      <style>
-        {`
-          @keyframes bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
-          }
-        `}
-      </style>
-    </div>
+    </Animated.View>
   );
 };
 
-const IssueMap = ({ latitude, longitude, zoom = 14 }) => {
-  // Robust check for backend coordinates
+// Main Map Component
+const IssueMap = ({ latitude, longitude }) => {
+  const center =
+    latitude && longitude
+      ? { latitude, longitude }
+      : defaultCenter; // fallback
 
-
-
-  console.log("Iam From Issuemap getting cood",latitude,longitude)
- 
-
-  // WEB
-  if (Platform.OS === "web") {
-    return (
-      <div
-        style={{
-          width: "100%",
-          height: "200px",
-          borderRadius: 12,
-          overflow: "hidden",
-          border: "1px solid #f97316",
-          margin: "1px 0",
+  return (
+    <View style={styles.mapContainer}>
+      <MapView
+        style={styles.map}
+        provider={Platform.OS === "android" ? "google" : undefined}
+        initialRegion={{
+          latitude: center.latitude,
+          longitude: center.longitude,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
         }}
       >
-        <Map
-          initialViewState={{
-            longitude: longitude,
-            latitude: latitude,
-            zoom,
-          }}
-          style={{ width: "100%", height: "100%" }}
-          mapboxAccessToken={MAPBOX_API_KEY}
-          mapStyle="mapbox://styles/mapbox/streets-v11"
-        >
-          <WebMarker longitude={longitude} latitude={latitude}>
-            <MapPin color="#f97316" size={28} />
-          </WebMarker>
-        </Map>
-      </div>
-    );
-  }
-
-  // MOBILE
-  return (
-    <View
-      style={{
-        height: 200,
-        marginVertical: 12,
-        borderRadius: 12,
-        overflow: "hidden",
-        borderWidth: 1,
-        borderColor: "#f97316",
-        alignItems: "center",
-      }}
-    >
-      <MapboxGL.MapView style={{ flex: 1 }}>
-        <MapboxGL.Camera zoomLevel={zoom} centerCoordinate={[center.longitude, center.latitude]} />
-        <MapboxGL.PointAnnotation id="issueMarker" coordinate={[center.longitude, center.latitude]}>
+        <Marker coordinate={center}>
           <MapPin color="#f97316" size={28} />
-        </MapboxGL.PointAnnotation>
-      </MapboxGL.MapView>
+        </Marker>
+      </MapView>
     </View>
   );
 };
 
 export default IssueMap;
+
+const styles = StyleSheet.create({
+  mapContainer: {
+    height: 400, // match HotspotsMap for visibility
+    width: "100%",
+    marginVertical: 12,
+    borderRadius: 12,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#f97316",
+  },
+  map: {
+    flex: 1,
+  },
+});

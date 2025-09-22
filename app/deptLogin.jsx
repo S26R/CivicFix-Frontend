@@ -1,12 +1,13 @@
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
-import { API_URL } from "@env"; // backend URL
+
 import { useAuthStore } from "../store/useAuthStore";
 import Toast from "react-native-toast-message";
-
+import Constants from "expo-constants";
 
 const DeptLogin = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const router = useRouter();
   const { login } = useAuthStore(); // use Zustand store
   const [loading, setLoading] = useState(false);
