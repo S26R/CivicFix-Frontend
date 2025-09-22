@@ -6,7 +6,7 @@ import { useAuthStore } from "../store/useAuthStore.js"; // adjust path
 import Constants from "expo-constants"
 import StatusBadge from "./StatusBadge.jsx";
 
-const MyReports_dash = ({ router, n = 3, link = false }) => {
+const MyReports_dash = ({ router, n = 3, link = false, refreshing, setRefreshing }) => {
   const API_URL=Constants.expoConfig?.extra?.API_URL;
   const { token, user } = useAuthStore();
 
@@ -47,63 +47,84 @@ const MyReports_dash = ({ router, n = 3, link = false }) => {
       setAddresses((prev) => ({ ...prev, [issueId]: "Unknown area" }));
     }
   };
-  useEffect(() => {
-    const fetchIssues = async () => {
-      try {
-        setLoading(true);
-        if (!user?.id) return;
 
-        const res = await fetch(`${API_URL}/api/issues/user/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        //res=JSON.parse(res);
+  // 🔹 Fetch issues function (extracted for reuse)
+  const fetchIssues = async () => {
+    try {
+     // setLoading(true);
+      if (!user?.id) return;
 
-        if (!res.ok) throw new Error("Failed to fetch issues");
+      const res = await fetch(`${API_URL}/api/issues/user/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        const data = await res.json();
-        setIssues(data);
+      if (!res.ok) throw new Error("Failed to fetch issues");
 
-        // Start geocoding individually in background
-        data.forEach((issue) => {
-          if (
-            issue.location?.coordinates?.length === 2 &&
-            !addresses[issue._id]
-          ) {
-            const [lng, lat] = issue.location.coordinates;
-            fetchAddress(lat, lng, issue._id);
-          }
-        });
-      } catch (err) {
-        console.error("Error fetching my issues:", err);
-      } finally {
-        setLoading(false);
+      const data = await res.json();
+      setIssues(data);
+
+      // Clear addresses cache for fresh geocoding
+      setAddresses({});
+
+      // Start geocoding individually in background
+      data.forEach((issue) => {
+        if (issue.location?.coordinates?.length === 2) {
+          const [lng, lat] = issue.location.coordinates;
+          fetchAddress(lat, lng, issue._id);
+        }
+      });
+    } catch (err) {
+      console.error("Error fetching my issues:", err);
+    } finally {
+      //setLoading(false);
+      // Notify parent that refresh is complete
+      if (setRefreshing) {
+        setRefreshing(false);
       }
-    };
+    }
+  };
 
+  // Initial load
+  useEffect(() => {
     if (token && user) {
       fetchIssues();
     }
   }, [token, user]);
 
-  if (loading) {
-    return (
-      <View className="p-4">
-        <ActivityIndicator size="large" color="#f97316" />
-      </View>
-    );
-  }
+  // Handle refresh from parent
+  useEffect(() => {
+    if (refreshing && token && user) {
+      fetchIssues();
+    }
+  }, [refreshing, token, user]);
+
+  // if (loading) {
+  //   return (
+  //     <View className="p-4">
+  //       <ActivityIndicator size="large" color="#f9" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <View className="rounded-2xl bg-orange-50 shadow-lg border border-orange-200 m-2">
       <View className="bg-white p-4 rounded-lg">
-        <Text className="text-2xl font-bold text-orange-600 mb-6">
-          My Top Reports
-        </Text>
+        <View className="flex-row justify-between items-center mb-6">
+          <Text className="text-2xl font-bold text-orange-600">
+            My Top Reports
+          </Text>
+          {refreshing && (
+            <ActivityIndicator size="small" color="#f97316" />
+          )}
+        </View>
 
         {issues.length === 0 ? (
-          <Text className="text-gray-500">No reports yet.</Text>
+          <View className="text-center">
+            <Text className="text-gray-500 mb-2">No reports yet.</Text>
+            <Text className="text-xs text-gray-400">Pull down to refresh</Text>
+          </View>
         ) : (
           issues.slice(0, n).map((issue) => {
             const createdAt = new Date(issue.createdAt);
