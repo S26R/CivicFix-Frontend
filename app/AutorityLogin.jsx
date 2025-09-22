@@ -89,10 +89,11 @@ const AuthorityLogin = () => {
 
         <TouchableOpacity
           onPress={handleLogin}
-          className="bg-orange-500 rounded-xl py-3 mb-4"
+          className={`bg-orange-500 rounded-xl py-3 mb-4 ${loading ? "opacity-70" : ""}`}
           activeOpacity={0.7}
+          disabled={loading}
         >
-          <Text className={`text-white text-center text-lg font-semibold ${loading ? "animate-pulse" : ""}`}>
+          <Text className="text-white text-center text-lg font-semibold">
             {loading ? "Logging in..." : "Login"}
           </Text>
         </TouchableOpacity>
