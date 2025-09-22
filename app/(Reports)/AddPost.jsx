@@ -131,7 +131,7 @@ const AddPost = () => {
 
       if (response.ok) {
         Toast.show({ type: "success", text1: "Wohoo Report Created", text2: "Your voice makes a difference 💡" });
-        router.push("/(DashBoard)/Home");
+        router.push("/Home");
       } else {
         Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
       }
