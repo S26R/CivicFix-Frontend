@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity, Alert } from 'react-native'
-import React from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../store/useAuthStore';
 import Toast from 'react-native-toast-message';

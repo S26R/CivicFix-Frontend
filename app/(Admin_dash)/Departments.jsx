@@ -1,9 +1,10 @@
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
-import { API_URL } from "@env";
+import Constants from "expo-constants";
 
 const Departments = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const { token } = useAuthStore();
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);

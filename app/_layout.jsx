@@ -4,24 +4,28 @@ import Toast from "react-native-toast-message";
 import { useAuthStore } from "../store/useAuthStore";
 import { ActivityIndicator, View } from "react-native";
 import { useEffect } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context"; 
 
 export default function RootLayout() {
-   const { init, isReady } = useAuthStore();
+  const { init, isReady } = useAuthStore();
 
   useEffect(() => {
-    init(); // load token once
+    init(); 
   }, []);
 
   if (!isReady) {
-    // while token loads, show loader
+    
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
+      <SafeAreaProvider> 
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <ActivityIndicator size="large" />
+        </View>
+      </SafeAreaProvider>
     );
   }
+
   return (
-    <>
+    <SafeAreaProvider> 
       <Stack
         screenOptions={{
           headerStyle: {
@@ -45,8 +49,8 @@ export default function RootLayout() {
         <Stack.Screen name="(Admin_dash)" options={{ headerShown: false }} />
       </Stack>
 
-      {/* 👇 Toast MUST be outside the Stack */}
+     
       <Toast />
-    </>
+    </SafeAreaProvider>
   );
 }

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator, ScrollView, Dimensions } from "react-native";
 import { useAuthStore } from "../../store/useAuthStore.js";
-import { API_URL } from "@env";
-import { PieChart } from "react-native-chart-kit";
 
+import { PieChart } from "react-native-chart-kit";
+import Constants from "expo-constants"
 import { BarChart } from "react-native-chart-kit";
 
 import HotspotsMap from "../../Components/HotspotMap.jsx";
@@ -11,6 +11,7 @@ import HotspotsMap from "../../Components/HotspotMap.jsx";
 const screenWidth = Dimensions.get("window").width;
 
 export default function AnalyticsDemo() {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const { token } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
@@ -146,16 +147,13 @@ export default function AnalyticsDemo() {
 ) : (
   <Text style={{ color: "#666" }}>No reporters</Text>
 )}
-{/* Hotspots */}
-<Text style={{ marginTop: 12, marginBottom: 6, fontWeight: "600" }}>
-  Top hotspots
-</Text>
-
-{data.hotspots && data.hotspots.length ? (
+<Text style={{ marginTop: 12, marginBottom: 6, fontWeight: "600" }}>Nearby Hotspots</Text>
+{data.hotspots && data.hotspots.length > 0 ? (
   <HotspotsMap hotspots={data.hotspots} />
 ) : (
-  <Text style={{ color: "#666" }}>No hotspots</Text>
+  <Text style={{ color: "#666", marginBottom: 16 }}>No hotspot data</Text>
 )}
+
 
 
 

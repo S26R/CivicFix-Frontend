@@ -2,14 +2,14 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { API_URL } from "@env";
+import Constants from "expo-constants"
 import { useAuthStore } from "../../store/useAuthStore.js"; // adjust path
 import { useRouter } from "expo-router";
 import StatusBadge from "../../Components/StatusBadge.jsx";
 import { ScrollView } from "react-native";
 
-
 export default function DepartmentHome(link = true) {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const router = useRouter();
   const { token } = useAuthStore();
   

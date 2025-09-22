@@ -16,11 +16,12 @@ import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import { API_URL } from "@env";
+import Constants from "expo-constants"
 import { useAuthStore } from "../../store/useAuthStore";
 import Toast from "react-native-toast-message";
 
 const AddPost = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const router = useRouter();
   const { token } = useAuthStore();
 
@@ -128,7 +129,7 @@ const AddPost = () => {
         setModalVisible(true);
         return;
       }
-
+      //response=JSON.parse(response);
       if (response.ok) {
         Toast.show({ type: "success", text1: "Wohoo Report Created", text2: "Your voice makes a difference 💡" });
         router.push("/(DashBoard)/Home");

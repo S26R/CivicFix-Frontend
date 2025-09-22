@@ -8,8 +8,9 @@ import {
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { useAuthStore } from "../../store/useAuthStore";
-import { API_URL } from "@env";
+
 import { Animated } from "react-native";
+import Constants from "expo-constants";
 
 const AnimatedNumber = ({ value, style }) => {
   const animatedValue = React.useRef(new Animated.Value(0)).current;
@@ -33,6 +34,7 @@ const AnimatedNumber = ({ value, style }) => {
 };
 
 const HomeAdmin = () => {
+  const API_URL=Constants.expoConfig?.extra?.API_URL;
   const router = useRouter();
   const { user, token } = useAuthStore();
 
