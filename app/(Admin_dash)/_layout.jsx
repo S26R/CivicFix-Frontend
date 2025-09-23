@@ -24,6 +24,7 @@ const AdmindashLayout = () => {
         <Stack.Screen name="Citizens" options={{ title: "Citizens"}} />
         <Stack.Screen name="Departments" options={{ title: "Departments"}} />
         <Stack.Screen name="Authorities" options={{ title: "Authorities"}} />
+        <Stack.Screen name="id" options={{ title: "Issue Details"}} />
         </Stack>
   )
 }

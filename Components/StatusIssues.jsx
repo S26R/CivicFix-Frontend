@@ -56,7 +56,7 @@ const StatusIssues = ({ status, title }) => {
         renderItem={({ item }) => (
           <IssueCard
             issue={item}
-            onPress={() => router.push(`/admin/issue/${item._id}`)}
+            onPress={() => router.push(`/id?id=${item._id}`)}
           />
         )}
         ListEmptyComponent={
