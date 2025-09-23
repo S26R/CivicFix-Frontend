@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -8,36 +8,37 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
-  Modal,
   Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import Constants from "expo-constants"
+import Constants from "expo-constants";
 import { useAuthStore } from "../../store/useAuthStore";
 import Toast from "react-native-toast-message";
+import { Audio } from "expo-av";
 
 const AddPost = () => {
-  const API_URL=Constants.expoConfig?.extra?.API_URL;
+  const API_URL = Constants.expoConfig?.extra?.API_URL;
   const router = useRouter();
   const { token } = useAuthStore();
 
   const [report, setReport] = useState({
     title: "",
     description: "",
-    department: "",
     image: null,
+    audio: null,
   });
 
   const [location, setLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // NEW states for modal handling
-  const [modalVisible, setModalVisible] = useState(false);
-  const [nearbyIssue, setNearbyIssue] = useState(null);
+  // Audio states
+  const [recording, setRecording] = useState(null);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const [sound, setSound] = useState(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -51,6 +52,7 @@ const AddPost = () => {
     })();
   }, []);
 
+  // Pick image
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaType,
@@ -61,6 +63,7 @@ const AddPost = () => {
     }
   };
 
+  // Take photo
   const takePhoto = async () => {
     let result = await ImagePicker.launchCameraAsync({ quality: 0.7 });
     if (!result.canceled) {
@@ -68,9 +71,82 @@ const AddPost = () => {
     }
   };
 
+  // Start recording
+  const startRecording = async () => {
+    try {
+      const { status } = await Audio.requestPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission denied", "Microphone access is required.");
+        return;
+      }
+
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+
+      setRecording(recording);
+      setRecordingDuration(0);
+
+      // Start timer for 30s max
+      timerRef.current = setInterval(() => {
+        setRecordingDuration((prev) => {
+          if (prev >= 29) {
+            stopRecording();
+            return 30;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    } catch (err) {
+      console.error("Recording start error:", err);
+    }
+  };
+
+  // Stop recording
+  const stopRecording = async () => {
+    if (!recording) return;
+    clearInterval(timerRef.current);
+
+    try {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      setReport((prev) => ({ ...prev, audio: uri }));
+    } catch (err) {
+      console.error("Stop recording error:", err);
+    } finally {
+      setRecording(null);
+      setRecordingDuration(0);
+    }
+  };
+
+  // Play recorded audio
+  const playAudio = async () => {
+    if (!report.audio) return;
+    try {
+      const { sound } = await Audio.Sound.createAsync({ uri: report.audio });
+      setSound(sound);
+      await sound.playAsync();
+    } catch (err) {
+      console.error("Play audio error:", err);
+    }
+  };
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
   // ---------------- Submit ----------------
-  const handleSubmit = async (extra = {}) => {
-    if (!report.title || !report.description || !report.department) {
+  const handleSubmit = async () => {
+    if (!report.title || !report.description) {
       Alert.alert("Validation Error", "Please fill all required fields.");
       return;
     }
@@ -85,33 +161,30 @@ const AddPost = () => {
       const formData = new FormData();
       formData.append("topic", report.title);
       formData.append("description", report.description);
-      formData.append("department", report.department);
       formData.append("lat", location.coords.latitude);
       formData.append("lng", location.coords.longitude);
 
-      if (extra.joinExisting !== undefined) {
-        formData.append("joinExisting", extra.joinExisting);
+      // Image
+      if (report.image) {
+        const fileUri = report.image.startsWith("file://")
+          ? report.image
+          : `file://${report.image}`;
+        const fileObject = {
+          uri: fileUri,
+          name: "photo.jpg",
+          type: "image/jpeg",
+        };
+        formData.append("media", fileObject);
       }
 
-      if (report.image) {
-        if (Platform.OS === "web" && report.image.startsWith("blob:")) {
-          // ✅ Web: convert blob URL to File
-          const response = await fetch(report.image);
-          const blob = await response.blob();
-          const file = new File([blob], "photo.jpg", { type: blob.type });
-          formData.append("media", file);
-        } else {
-          // ✅ Native: use file:// uri
-          const fileUri = report.image.startsWith("file://")
-            ? report.image
-            : `file://${report.image}`;
-          const fileObject = {
-            uri: fileUri,
-            name: "photo.jpg",
-            type: "image/jpeg",
-          };
-          formData.append("media", fileObject);
-        }
+      // Audio
+      if (report.audio) {
+        const audioFile = {
+          uri: report.audio,
+          name: "voice.m4a",
+          type: "audio/m4a",
+        };
+        formData.append("audio", audioFile);
       }
 
       const response = await fetch(`${API_URL}/api/issues/create`, {
@@ -123,54 +196,29 @@ const AddPost = () => {
       const data = await response.json();
       console.log("Upload response:", data);
 
-      if (data.similarFound) {
-        Toast.show({ type: "success", text1: "Similar Issue Detected", text2: "Found a Similar Issue Nearby" });
-        setNearbyIssue(data.nearbyIssue);
-        setModalVisible(true);
-        return;
-      }
-      //response=JSON.parse(response);
       if (response.ok) {
-        Toast.show({ type: "success", text1: "Wohoo Report Created", text2: "Your voice makes a difference 💡" });
+        Toast.show({
+          type: "success",
+          text1: "Wohoo Report Created",
+          text2: "Your voice makes a difference 💡",
+        });
         router.push("/Home");
       } else {
-        Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
+        Toast.show({
+          type: "error",
+          text1: "Sorry 🥺",
+          text2: "Something went Wrong",
+        });
       }
     } catch (err) {
       console.error("Submit error:", err);
-      Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
+      Toast.show({
+        type: "error",
+        text1: "Sorry 🥺",
+        text2: "Something went Wrong",
+      });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  // ---------------- Modal Actions ----------------
-  const handleJoin = () => {
-    setModalVisible(false);
-    handleSubmit({ joinExisting: true });
-  };
-
-  const handleCreateNew = () => {
-    setModalVisible(false);
-    handleSubmit({ joinExisting: false });
-  };
-
-  const handleUpvote = async () => {
-    setModalVisible(false);
-    try {
-      const res = await fetch(`${API_URL}/api/issues/${nearbyIssue._id}/upvote`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const d = await res.json();
-      if (res.ok) {
-        Toast.show({type:"success",text1:"Upvoted!",text2: "You upvoted the existing issue.👌"});
-        router.push("/(DashBoard)/Home");
-      } else {
-        Toast.show({type:"error",text1:"Sorry 🥺",text2:"Something went Wrong"})
-      }
-    } catch (err) {
-      console.error("Upvote error:", err);
     }
   };
 
@@ -228,16 +276,12 @@ const AddPost = () => {
         </View>
 
         {/* Title */}
-        <Text className="text-base font-semibold mb-2 text-orange-600">
-          Title
-        </Text>
+        <Text className="text-base font-semibold mb-2 text-orange-600">Title</Text>
         <TextInput
           className="border border-orange-400 rounded-2xl p-3 bg-white text-base mb-5 shadow-sm"
           placeholder="Enter report title"
           value={report.title}
-          onChangeText={(text) =>
-            setReport((prev) => ({ ...prev, title: text }))
-          }
+          onChangeText={(text) => setReport((prev) => ({ ...prev, title: text }))}
         />
 
         {/* Description */}
@@ -254,65 +298,49 @@ const AddPost = () => {
           multiline
         />
 
-        {/* Department */}
+        {/* Voice Recorder */}
         <Text className="text-base font-semibold mb-2 text-orange-600">
-          Department
+          Record Voice (max 30s)
         </Text>
-        {/* <View className="border border-orange-400 rounded-2xl px-2 py-2 bg-white mb-5 shadow-sm">
-          <Picker
-            selectedValue={report.department}
-            onValueChange={(val) =>
-              setReport((prev) => ({ ...prev, department: val }))
-            }
-          >
-            <Picker.Item label="Select Department" value="" />
-            <Picker.Item
-              label="Roads & Infrastructure"
-              value="Roads & Infrastructure Department"
-            />
-            <Picker.Item
-              label="Street Lighting & Electricity"
-              value="Street Lighting & Electricity Department"
-            />
-            <Picker.Item
-              label="Water Supply & Drainage"
-              value="Water Supply & Drainage Department"
-            />
-            <Picker.Item
-              label="Sanitation & Waste Management"
-              value="Sanitation & Waste Management Department"
-            />
-            <Picker.Item
-              label="Public Safety & Transport"
-              value="Public Safety & Transport Department"
-            />
-            <Picker.Item
-              label="Parks & Public Spaces"
-              value="Parks & Public Spaces Department"
-            />
-            <Picker.Item
-              label="Pollution Control"
-              value="Pollution Control Department"
-            />
-            <Picker.Item label="Animal Control" value="Animal Control Department" />
-            <Picker.Item label="General" value="General Department" />
-          </Picker>
-        </View> */}
 
-        {/* Cancel + Submit */}
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="bg-gray-200 px-4 py-4 rounded-2xl shadow-lg mb-2"
-          activeOpacity={0.7}
-        >
-          <Text className="text-gray-600 text-center font-semibold text-lg">
-            Cancel
-          </Text>
-        </TouchableOpacity>
+        <View className="flex-row items-center mb-5">
+          {!recording ? (
+            <TouchableOpacity
+              onPress={startRecording}
+              className="bg-orange-500 px-4 py-3 rounded-2xl shadow-lg flex-row items-center justify-center flex-1 mr-2"
+            >
+              <Ionicons name="mic-outline" size={22} color="#fff" />
+              <Text className="text-white font-semibold ml-2">Start</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={stopRecording}
+              className="bg-red-500 px-4 py-3 rounded-2xl shadow-lg flex-row items-center justify-center flex-1 mr-2"
+            >
+              <Ionicons name="stop-circle-outline" size={22} color="#fff" />
+              <Text className="text-white font-semibold ml-2">
+                Stop ({recordingDuration}s)
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {report.audio && (
+            <TouchableOpacity
+              onPress={playAudio}
+              className="bg-green-600 px-4 py-3 rounded-2xl shadow-lg flex-row items-center justify-center flex-1"
+            >
+              <Ionicons name="play-circle-outline" size={22} color="#fff" />
+              <Text className="text-white font-semibold ml-2">Play</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+
+        {/* Submit */}
         <TouchableOpacity
           onPress={handleSubmit}
           disabled={isLoading}
-          className={`px-4 py-4 rounded-2xl shadow-xl ${
+          className={`px-4 mb-4 py-4 rounded-2xl shadow-xl ${
             isLoading ? "bg-green-300" : "bg-green-600"
           }`}
           activeOpacity={0.7}
@@ -325,47 +353,18 @@ const AddPost = () => {
             </Text>
           )}
         </TouchableOpacity>
+
+        {/* Cancel */}
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="bg-red-500 px-4 py-4 rounded-2xl shadow-lg mb-2"
+          activeOpacity={0.7}
+        >
+          <Text className="text-white text-center font-semibold text-lg">
+            Cancel
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
-
-      {/* 🔥 Modal */}
-      <Modal visible={modalVisible} transparent animationType="slide">
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white p-6 rounded-2xl w-4/5 shadow-xl">
-            <Text className="text-xl font-bold text-center text-orange-600 mb-4">
-              Nearby Issue Found
-            </Text>
-            {nearbyIssue && (
-              <Text className="text-gray-700 mb-3 text-center">
-                "{nearbyIssue.topic}" already exists within 12m in{" "}
-                {nearbyIssue.department}.
-              </Text>
-            )}
-
-            <TouchableOpacity
-              className="bg-green-600 py-3 rounded-xl mb-3"
-              onPress={handleJoin}
-            >
-              <Text className="text-white text-center font-semibold">Join Issue</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className="bg-blue-600 py-3 rounded-xl mb-3"
-              onPress={handleUpvote}
-            >
-              <Text className="text-white text-center font-semibold">Upvote Issue</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className="bg-orange-600 py-3 rounded-xl"
-              onPress={handleCreateNew}
-            >
-              <Text className="text-white text-center font-semibold">
-                Create New Issue
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };
