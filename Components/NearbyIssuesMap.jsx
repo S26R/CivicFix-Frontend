@@ -274,11 +274,6 @@ const NearbyIssuesMap = () => {
           <Text style={styles.legendText}>Rejected</Text>
         </View>
       </View>
-
-      {/* Info */}
-      <Text style={styles.infoText}>
-        {issues.length > 0 ? `Showing ${issues.length} nearby issues` : "No nearby issues found"}
-      </Text>
     </View>
   );
 };
@@ -291,7 +286,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   mapContainer: {
-    height: 200,
+    height: 600,
     width: "100%",
     borderRadius: 12,
     overflow: "hidden",
@@ -338,7 +333,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   errorContainer: {
-    height: 200,
+    height: 300,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fef2f2",
@@ -357,7 +352,7 @@ const styles = StyleSheet.create({
     color: "#7f1d1d",
   },
   loadingContainer: {
-    height: 200,
+    height: 300,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fef7ed",

@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 import Constants from "expo-constants";
+import { Video } from 'expo-av'
 
 import { useAuthStore } from "../../store/useAuthStore.js";
 import { Ionicons } from "@expo/vector-icons";
@@ -132,7 +133,7 @@ const ReportDetails = () => {
       {issue.media && issue.media.length > 0 ? (
      <View
     
-    className="mb-4 ml-16 mt-4"
+    className="mb-4  items-center justify-center  mt-4"
     contentContainerStyle={{
       justifyContent: 'center',
       alignItems: 'center',
@@ -140,17 +141,26 @@ const ReportDetails = () => {
     }}
   >
     {issue.media.map((item, index) => (
-      <View
-        key={index}
-        className="w-96 h-80 bg-orange-100 rounded-xl mb-4 justify-center items-center border border-orange-400 mr-2"
-      >
-        <Image
-          source={{ uri: item.url }}
-          className="w-full h-full rounded-xl"
-          resizeMode="cover"
-        />
-      </View>
-    ))}
+  <View
+    key={index}
+    className="w-96 h-80 bg-orange-100 rounded-xl mb-4 justify-center items-center border border-orange-400 "
+  >
+    {item.type.startsWith('image'||'Image') ? (
+      <Image
+        source={{ uri: item.url }}
+        style={{ width: '100%', height: '100%', borderRadius:10 }}
+        resizeMode="cover"
+      />
+    ) : item.type.startsWith('video') ? (
+     <Video
+    source={{ uri: item.url }}
+    style={{ width: '100%', height: '100%', borderRadius: 10 }}
+    resizeMode="cover"
+    useNativeControls // Change this prop for clarity and correctness
+/>
+    ) : null}
+  </View>
+))}
   </View>
 ) : (
   <View className="w-full h-40 bg-orange-100 rounded-xl mb-4 justify-center items-center border border-orange-200">
@@ -197,7 +207,7 @@ const ReportDetails = () => {
         {/* Uploaded BY */}
          <View className="flex-row items-center mb-2">
     
-    <Text className="text-gray-700 font-medium text-sm">Uploaded by : {issue.uploadedBy}</Text>
+    <Text className="text-gray-700 font-medium text-sm">Uploaded by : {issue.uploadedBy?.name || issue.uploadedBy?.email || 'Unknown'}</Text>
   </View>
 
         {/* Description */}

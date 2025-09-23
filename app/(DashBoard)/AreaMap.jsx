@@ -28,7 +28,7 @@ const AreaMap = () => {
 
         {/* Additional Information */}
         <View className="rounded-2xl bg-white shadow-lg border border-gray-200 p-4">
-          <Text className="text-lg font-semibold text-gray-800 mb-2">
+          {/* <Text className="text-lg font-semibold text-gray-800 mb-2">
             📋 How to Use
           </Text>
           <Text className="text-gray-600 mb-2">
@@ -42,7 +42,7 @@ const AreaMap = () => {
           </Text>
           <Text className="text-gray-600 mb-2">
             • 🔴 Red markers: Rejected issues
-          </Text>
+          </Text> */}
           <Text className="text-gray-600 mt-3">
             💡 Enable location services to see issues near you. Tap any marker to view detailed information about the civic issue.
           </Text>
