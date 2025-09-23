@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuthStore } from "../../store/useAuthStore.js";
-import { API_URL } from "@env";
+import Constants from "expo-constants";
 import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
@@ -12,6 +12,8 @@ export default function Profile() {
   const [profile, setProfile] = useState("");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  
+  const API_URL = process.env.API_URL;
 
   useEffect(() => {
     if (!token || !user) return; // wait until store has values
@@ -19,6 +21,11 @@ export default function Profile() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
+        if (!API_URL) {
+          console.error("API_URL not configured");
+          return;
+        }
+        
         const res = await fetch(`${API_URL}/api/auth/profile/${user.id}`, {
           headers: {
             "Content-Type": "application/json",
@@ -46,9 +53,25 @@ export default function Profile() {
 
   // Logout handler
   const handleLogout = async () => {
-    await logout();
-    Toast.show({type:"success",text1:"Sayonara 🥺",text2:"Thanks for contributing to make the community better 🙌"})
-    router.replace("/");
+    try {
+      await logout();
+      Toast.show({
+        type: "success",
+        text1: "Sayonara 🥺",
+        text2: "Thanks for contributing to make the community better 🙌"
+      });
+      // Add a small delay to ensure logout completes
+      setTimeout(() => {
+        router.replace("/");
+      }, 500);
+    } catch (error) {
+      console.error("Logout error:", error);
+      Toast.show({
+        type: "error",
+        text1: "Logout Failed",
+        text2: "Please try again"
+      });
+    }
   };
 
   if (loading) {

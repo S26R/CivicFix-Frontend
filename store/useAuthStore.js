@@ -42,9 +42,12 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     try {
       await AsyncStorage.removeItem("civic-auth-token");
-      set({ token: null, user: null, role: null });
+      set({ token: null, user: null, role: null, isReady: true });
     } catch (e) {
       console.error("Logout error:", e);
+      // Even if AsyncStorage fails, clear the state
+      set({ token: null, user: null, role: null, isReady: true });
+      throw e; // Re-throw to handle in UI
     }
   },
 }));

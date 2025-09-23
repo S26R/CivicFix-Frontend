@@ -20,7 +20,7 @@ const DashLayout = () => {
 
   
   return (
-    <Tabs
+       <Tabs
     screenOptions={{
         headerStyle: { backgroundColor: "#f4511e" },
         headerTintColor: "#fff",
