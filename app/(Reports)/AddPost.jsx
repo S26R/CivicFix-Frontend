@@ -258,7 +258,7 @@ const AddPost = () => {
         <Text className="text-base font-semibold mb-2 text-orange-600">
           Department
         </Text>
-        <View className="border border-orange-400 rounded-2xl px-2 py-2 bg-white mb-5 shadow-sm">
+        {/* <View className="border border-orange-400 rounded-2xl px-2 py-2 bg-white mb-5 shadow-sm">
           <Picker
             selectedValue={report.department}
             onValueChange={(val) =>
@@ -297,7 +297,7 @@ const AddPost = () => {
             <Picker.Item label="Animal Control" value="Animal Control Department" />
             <Picker.Item label="General" value="General Department" />
           </Picker>
-        </View>
+        </View> */}
 
         {/* Cancel + Submit */}
         <TouchableOpacity
