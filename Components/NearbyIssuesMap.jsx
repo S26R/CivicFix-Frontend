@@ -274,11 +274,6 @@ const NearbyIssuesMap = () => {
           <Text style={styles.legendText}>Rejected</Text>
         </View>
       </View>
-
-      {/* Info */}
-      <Text style={styles.infoText}>
-        {issues.length > 0 ? `Showing ${issues.length} nearby issues` : "No nearby issues found"}
-      </Text>
     </View>
   );
 };
@@ -288,16 +283,12 @@ export default NearbyIssuesMap;
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    marginVertical: 8,
   },
   mapContainer: {
-    height: 200,
+    height: 590,
     width: "100%",
-    borderRadius: 12,
     overflow: "hidden",
-    borderWidth: 1.5,
-    borderColor: "#f97316",
-    shadowColor: "#f97316",
+    
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
@@ -310,7 +301,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     backgroundColor: "#fff",
-    padding: 8,
+    padding: 12,
+    marginBottom: 8,
     marginTop: 4,
     borderRadius: 8,
     borderWidth: 1,
@@ -321,13 +313,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   legendDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     marginRight: 4,
   },
   legendText: {
-    fontSize: 10,
+    fontSize: 12,
     color: "#6b7280",
     fontWeight: "500",
   },
@@ -335,10 +327,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#6b7280",
     textAlign: "center",
-    marginTop: 4,
+    marginTop: 3,
   },
   errorContainer: {
-    height: 200,
+    height: 300,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fef2f2",
@@ -357,7 +349,7 @@ const styles = StyleSheet.create({
     color: "#7f1d1d",
   },
   loadingContainer: {
-    height: 200,
+    height: 300,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fef7ed",
@@ -366,7 +358,7 @@ const styles = StyleSheet.create({
     borderColor: "#fed7aa",
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#ea580c",
     fontWeight: "600",
   },

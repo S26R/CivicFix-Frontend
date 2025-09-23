@@ -302,6 +302,7 @@ const AddPost = () => {
         <Text className="text-base font-semibold mb-2 text-orange-600">
           Record Voice (max 30s)
         </Text>
+
         <View className="flex-row items-center mb-5">
           {!recording ? (
             <TouchableOpacity
@@ -333,6 +334,7 @@ const AddPost = () => {
             </TouchableOpacity>
           )}
         </View>
+
 
         {/* Submit */}
         <TouchableOpacity
