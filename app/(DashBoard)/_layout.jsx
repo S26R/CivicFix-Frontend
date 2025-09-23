@@ -38,6 +38,16 @@ const DashLayout = () => {
         }}
       />
       <Tabs.Screen
+              name="AreaMap"
+              options={{
+                title: "Map",
+                headerTitle: "Nearby Issues",
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="compass" size={size} color={color} />
+                ),
+              }}
+            />
+      <Tabs.Screen
         name="MyReports"
         options={{
           title: "Reports",
