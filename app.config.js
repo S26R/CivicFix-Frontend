@@ -5,7 +5,7 @@ export default ({ config }) => ({
     slug: "CivicFix",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/AppIconbg.png",
+    icon: "./assets/CivicFix.png",
     userInterfaceStyle: "light",
     newArchEnabled: true,
     splash: {
