@@ -246,7 +246,7 @@ const NearbyIssuesMap = () => {
                 key={issue._id}
                 coordinate={{ latitude: lat, longitude: lng }}
                 title={issue.topic}
-                description={`${issue.status?.toUpperCase()} - ${issue.department}`}
+                description={`${issue.status?.toUpperCase()} - ${issue.assignedDepartmentName}`}
               >
                 <MapPin color={markerColor} size={24} />
               </Marker>
