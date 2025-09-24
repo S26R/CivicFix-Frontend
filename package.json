@@ -23,7 +23,7 @@
     "expo-router": "~6.0.1",
     "expo-status-bar": "~3.0.8",
     "jwt-decode": "^4.0.0",
-    "mapbox-gl": "^3.15.0",
+    "mapbox-gl": "^2.15.0",
     "nativewind": "^4.1.23",
     "paths-js": "^0.4.11",
     "prettier-plugin-tailwindcss": "^0.5.11",
