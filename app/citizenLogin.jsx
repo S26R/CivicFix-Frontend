@@ -28,7 +28,7 @@ const citizenLogin = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),
       });
-
+     console.log(response)
       const text = await response.text(); // read raw response
       let data;
       try {

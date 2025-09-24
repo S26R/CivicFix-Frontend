@@ -96,9 +96,14 @@ const DeptLogin = () => {
           className="bg-orange-500 rounded-xl py-3 mb-4"
           activeOpacity={0.7}
         >
-          <Text className={`text-white text-center text-lg font-semibold ${loading ? "animate-pulse" : ""}`}>
-            {loading ? "Logging in..." : "Login"}
-          </Text>
+          <Text
+  className={`text-white text-center text-lg font-semibold ${
+    loading ? "animate-pulse" : "animate-none"
+  }`}
+>
+  {loading ? "Logging in..." : "Login"}
+</Text>
+
         </TouchableOpacity>
 
         

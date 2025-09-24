@@ -15,6 +15,7 @@ import Constants from "expo-constants";
 const Signup = () => {
   const API_URL=Constants.expoConfig?.extra?.API_URL;
   const [formData, setFormData] = useState({
+    name:"",
     email: "",
     phone: "",
     aadhaar: "",
@@ -93,6 +94,17 @@ const Signup = () => {
         <Text className="text-2xl font-bold text-center text-orange-600 mb-6">
           Create Account
         </Text>
+         
+        <Text className="text-orange-600 mb-1 font-semibold">Name</Text>
+        <TextInput
+          placeholder="Eg:- Nikhil Yadavji"
+          keyboardType="Text"
+          autoCapitalize="none"
+          value={formData.name}
+          onChangeText={(val) => handleChange("name", val)}
+          className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base text-black"
+          placeholderTextColor="#FFC491"
+        />
 
         {/* Email */}
         <Text className="text-orange-600 mb-1 font-semibold">Email</Text>
@@ -103,7 +115,7 @@ const Signup = () => {
           value={formData.email}
           onChangeText={(val) => handleChange("email", val)}
           className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base text-black"
-          placeholderTextColor="#fb923c"
+          placeholderTextColor="#FFC491"
         />
 
         {/* Phone */}
@@ -113,7 +125,7 @@ const Signup = () => {
           keyboardType="phone-pad"
           maxLength={10}
           className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base"
-          placeholderTextColor="#fb923c"
+          placeholderTextColor="#FFC491"
           value={formData.phone}
           onChangeText={(value) => handleChange("phone", value)}
         />
@@ -125,7 +137,7 @@ const Signup = () => {
           keyboardType="number-pad"
           maxLength={12}
           className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base"
-          placeholderTextColor="#fb923c"
+          placeholderTextColor="#FFC491"
           value={formData.aadhaar}
           onChangeText={(value) => handleChange("aadhaar", value)}
         />
@@ -136,7 +148,7 @@ const Signup = () => {
           placeholder="Enter password"
           secureTextEntry
           className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base"
-          placeholderTextColor="#fb923c"
+          placeholderTextColor="#FFC491"
           value={formData.password}
           onChangeText={(value) => handleChange("password", value)}
         />
@@ -146,7 +158,7 @@ const Signup = () => {
         <TextInput
           placeholder="Enter village area"
           className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base"
-          placeholderTextColor="#fb923c"
+          placeholderTextColor="#FFC491"
           value={formData.villageArea}
           onChangeText={(value) => handleChange("villageArea", value)}
         />
@@ -158,13 +170,13 @@ const Signup = () => {
           keyboardType="number-pad"
           maxLength={3}
           className="border border-orange-300 rounded-xl px-4 py-3 mb-4 text-base"
-          placeholderTextColor="#fb923c"
+          placeholderTextColor="#FFC491"
           value={formData.wardNumber}
           onChangeText={(value) => handleChange("wardNumber", value)}
         />
 
         {/* Location */}
-        <Text className="text-orange-600 mb-1 font-semibold">Location</Text>
+        {/* <Text className="text-orange-600 mb-1 font-semibold">Location</Text>
         <View className="border border-orange-300 rounded-xl mb-6 overflow-hidden">
           <Picker
             selectedValue={formData.location}
@@ -176,7 +188,7 @@ const Signup = () => {
             <Picker.Item label="Sub-Area 2" value="sub2" />
             <Picker.Item label="Sub-Area 3" value="sub3" />
           </Picker>
-        </View>
+        </View> */}
 
         {/* Signup Button */}
         <TouchableOpacity

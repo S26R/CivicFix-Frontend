@@ -93,9 +93,14 @@ const AuthorityLogin = () => {
           activeOpacity={0.7}
           disabled={loading}
         >
-          <Text className="text-white text-center text-lg font-semibold">
-            {loading ? "Logging in..." : "Login"}
-          </Text>
+          <Text
+  className={`text-white text-center text-lg font-semibold ${
+    loading ? "animate-pulse" : "animate-none"
+  }`}
+>
+  {loading ? "Logging in..." : "Login"}
+</Text>
+
         </TouchableOpacity>
 
        

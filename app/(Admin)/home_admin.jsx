@@ -43,7 +43,11 @@ const HomeAdmin = () => {
   const [error, setError] = useState(null);
   const [citizenCount, setCitizenCount] = useState(0);
   const [departmentCount, setDepartmentCount] = useState(0);
-
+  useEffect(() => {
+    if (user?.role !== "authority" || !token) {
+      router.replace("/");
+    }
+  }, [user, token]);
   useEffect(() => {
     if (!token) return;
 
@@ -95,10 +99,7 @@ const HomeAdmin = () => {
     fetchAnalytics();
   }, [token]);
 
-  if (user?.role !== "authority" || !token) {
-    router.replace("/");
-    return null;
-  }
+  
 
   if (loading) {
     return (

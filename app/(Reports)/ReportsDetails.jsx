@@ -259,11 +259,14 @@ const ReportDetails = () => {
         <Text className="text-2xl font-bold text-orange-600 mb-1">
           {issue.topic}
         </Text>
+        <Text className="text-sm font-bold text-orange-300 mb-1">
+         Issue Id: {issue.issueId}
+        </Text>
         {/* Uploaded BY */}
         <View className="flex-row items-center mb-2">
           <Text className="text-gray-700 font-medium text-sm">
             Uploaded by :{" "}
-            {issue.uploadedBy?.name || issue.uploadedBy?.email || "Unknown"}
+            {issue.uploadedBy?.name || issue.uploadedBy?.email ||issue.userID || "Unknown"}
           </Text>
         </View>
 
