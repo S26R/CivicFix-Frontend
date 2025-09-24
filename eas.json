@@ -9,21 +9,24 @@
       "distribution": "internal",
       "env": {
         "API_URL": "https://civicfix-7b2s.onrender.com",
-        "GOOGLE_MAPS_API_KEY": "AIzaSyBM0UenTr2PARk2LtMRcvEX8YLWi3rU0Dc"
+        "GOOGLE_MAPS_API_KEY": "AIzaSyBM0UenTr2PARk2LtMRcvEX8YLWi3rU0Dc",
+        "EAS_INSTALL_FLAGS": "--legacy-peer-deps"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
         "API_URL": "https://civicfix-7b2s.onrender.com",
-        "GOOGLE_MAPS_API_KEY": "AIzaSyBM0UenTr2PARk2LtMRcvEX8YLWi3rU0Dc"
+        "GOOGLE_MAPS_API_KEY": "AIzaSyBM0UenTr2PARk2LtMRcvEX8YLWi3rU0Dc",
+        "EAS_INSTALL_FLAGS": "--legacy-peer-deps"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
         "API_URL": "https://civicfix-7b2s.onrender.com",
-        "GOOGLE_MAPS_API_KEY": "AIzaSyBM0UenTr2PARk2LtMRcvEX8YLWi3rU0Dc"
+        "GOOGLE_MAPS_API_KEY": "AIzaSyBM0UenTr2PARk2LtMRcvEX8YLWi3rU0Dc",
+        "EAS_INSTALL_FLAGS": "--legacy-peer-deps"
       }
     }
   },
